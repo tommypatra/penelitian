@@ -44,7 +44,7 @@ class DatabaseSeeder extends Seeder
         }
 
         $dtdef = [
-            ['name' => 'administrator', 'email' => 'admin@iainkendari.ac.id'],
+            ['name' => 'Muhammad Shaleh Assingkily', 'email' => 'admin@iainkendari.ac.id'],
             ['name' => 'Abdul Kadir', 'email' => 'abdulkadir@iainkendari.ac.id'],
             ['name' => 'Arif Tarawe', 'email' => 'ariftarawe@iainkendari.ac.id'],
             ['name' => 'Fahmi Gunawan', 'email' => 'fahmigunawan@iainkendari.ac.id'],
@@ -78,22 +78,24 @@ class DatabaseSeeder extends Seeder
 
         //pangkat
         $dtdef = [
-            ['nama' => 'II/a', 'urut' => 1],
-            ['nama' => 'II/b', 'urut' => 2],
-            ['nama' => 'II/c', 'urut' => 3],
-            ['nama' => 'II/d', 'urut' => 4],
-            ['nama' => 'III/a', 'urut' => 5],
-            ['nama' => 'III/b', 'urut' => 6],
-            ['nama' => 'III/c', 'urut' => 7],
-            ['nama' => 'III/d', 'urut' => 8],
-            ['nama' => 'IV/a', 'urut' => 9],
-            ['nama' => 'IV/b', 'urut' => 10],
-            ['nama' => 'IV/c', 'urut' => 11],
-            ['nama' => 'IV/d', 'urut' => 12],
-            ['nama' => 'IV/e', 'urut' => 13],
+            ['gol' => 'Non', 'nama' => 'Non PNS', 'urut' => 0],
+            ['gol' => 'II/a', 'nama' => 'Pengatur Muda', 'urut' => 1],
+            ['gol' => 'II/b', 'nama' => 'Pengatur Muda Tk. I', 'urut' => 2],
+            ['gol' => 'II/c', 'nama' => 'Pengatur', 'urut' => 3],
+            ['gol' => 'II/d', 'nama' => 'Pengatur Tk. I', 'urut' => 4],
+            ['gol' => 'III/a', 'nama' => 'Penata Muda', 'urut' => 5],
+            ['gol' => 'III/b', 'nama' => 'Penata Muda Tk. I', 'urut' => 6],
+            ['gol' => 'III/c', 'nama' => 'Penata', 'urut' => 7],
+            ['gol' => 'III/d', 'nama' => 'Penata Tk. I', 'urut' => 8],
+            ['gol' => 'IV/a', 'nama' => 'Pembina', 'urut' => 9],
+            ['gol' => 'IV/b', 'nama' => 'Pembina Tk. I', 'urut' => 10],
+            ['gol' => 'IV/c', 'nama' => 'Pembina Utama Muda', 'urut' => 11],
+            ['gol' => 'IV/d', 'nama' => 'Pembina Utama Madya', 'urut' => 12],
+            ['gol' => 'IV/e', 'nama' => 'Pembina Utama', 'urut' => 13],
         ];
         foreach ($dtdef as $dt) {
             Pangkat::create([
+                'gol' => $dt['gol'],
                 'nama' => $dt['nama'],
                 'urut' => $dt['urut'],
             ]);
@@ -159,10 +161,10 @@ class DatabaseSeeder extends Seeder
 
         //identitas user
         $dtdef = [
-            ['user_id' => 1, 'gelar_depan' => null, 'gelar_belakang' => null, 'jenis_kelamin' => 'L', 'no_hp' => '0852091720987', 'foto' => null, 'nidn' => '0091876309', 'nip' => '198510212009011008', 'parent_id' => 1, 'pangkat_id' => null],
-            ['user_id' => 2, 'gelar_depan' => 'Dr', 'gelar_belakang' => 'M.Pd', 'jenis_kelamin' => 'L', 'no_hp' => '085201987632', 'foto' => null, 'nidn' => '7164538290', 'nip' => '196810212001011001', 'parent_id' => 6, 'pangkat_id' => 9],
-            ['user_id' => 3, 'gelar_depan' => null, 'gelar_belakang' => 'SH', 'jenis_kelamin' => 'L', 'no_hp' => '085231245455', 'foto' => null, 'nidn' => '0098667810', 'nip' => '197810212004011002', 'parent_id' => 6, 'pangkat_id' => 6],
-            ['user_id' => 4, 'gelar_depan' => 'Dr', 'gelar_belakang' => 'S.Si., M.Hum', 'jenis_kelamin' => 'L', 'no_hp' => '085342537654', 'foto' => null, 'nidn' => '0098090098', 'nip' => '198210212005011007', 'parent_id' => 14, 'pangkat_id' => 7],
+            ['user_id' => 1, 'gelar_depan' => null, 'gelar_belakang' => null, 'jenis_kelamin' => 'L', 'no_hp' => '0852091720987', 'foto' => null, 'nidn' => '0091876309', 'nip' => '198510212009011008', 'unit_kerja_id' => 1, 'pangkat_id' => null],
+            ['user_id' => 2, 'gelar_depan' => 'Dr', 'gelar_belakang' => 'M.Pd', 'jenis_kelamin' => 'L', 'no_hp' => '085201987632', 'foto' => null, 'nidn' => '7164538290', 'nip' => '196810212001011001', 'unit_kerja_id' => 6, 'pangkat_id' => 9],
+            ['user_id' => 3, 'gelar_depan' => null, 'gelar_belakang' => 'SH', 'jenis_kelamin' => 'L', 'no_hp' => '085231245455', 'foto' => null, 'nidn' => '0098667810', 'nip' => '197810212004011002', 'unit_kerja_id' => 6, 'pangkat_id' => 6],
+            ['user_id' => 4, 'gelar_depan' => 'Dr', 'gelar_belakang' => 'S.Si., M.Hum', 'jenis_kelamin' => 'L', 'no_hp' => '085342537654', 'foto' => null, 'nidn' => '0098090098', 'nip' => '198210212005011007', 'unit_kerja_id' => 14, 'pangkat_id' => 7],
         ];
 
         foreach ($dtdef as $dt) {
@@ -174,7 +176,7 @@ class DatabaseSeeder extends Seeder
                 'no_hp' => $dt['no_hp'],
                 'nidn' => $dt['nidn'],
                 'nip' => $dt['nip'],
-                'parent_id' => $dt['parent_id'],
+                'unit_kerja_id' => $dt['unit_kerja_id'],
                 'pangkat_id' => $dt['pangkat_id'],
             ]);
         }

@@ -54,7 +54,8 @@ class UserRequest extends FormRequest
             $rules['password_lagi'] = 'required|string|same:password';
         } elseif ($this->isMethod('put') || $this->isMethod('patch')) {
             $rules['password'] = 'nullable|string|min:8';
-            $rules['password_lagi'] = 'nullable|string|same:password';
+            if ($this->input('password') != '')
+                $rules['password_lagi'] = 'required|string|same:password';
         }
         return $rules;
     }

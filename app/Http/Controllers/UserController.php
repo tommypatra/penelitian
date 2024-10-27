@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Role;
 use App\Models\User;
+use App\Models\UserRole;
 use App\Models\Identitas;
 use Illuminate\Http\Request;
 use App\Http\Requests\UserRequest;
@@ -24,26 +26,19 @@ class UserController extends Controller
             $dataQuery->where('name', 'like', '%' . $request->search . '%');
         }
 
-        $limit = $request->filled('limit') ? $request->limit : 0;
-        if ($limit) {
-            $data = $dataQuery->paginate($limit);
-            $resourceCollection = $data->getCollection()->map(function ($item) {
-                return new UserResource($item);
-            });
-            $data->setCollection($resourceCollection);
+        $default_limit = env('DEFAULT_LIMIT', 30);
+        $limit = $request->filled('limit') ? $request->limit : $default_limit;
+        $data = $dataQuery->paginate($limit);
+        $resourceCollection = $data->getCollection()->map(function ($item) {
+            return new UserResource($item);
+        });
+        $data->setCollection($resourceCollection);
 
-            $dataRespon = [
-                'status' => true,
-                'message' => 'Pengambilan data dilakukan',
-                'data' => $data,
-            ];
-        } else {
-            $dataRespon = [
-                'status' => true,
-                'message' => 'Pengambilan data dilakukan',
-                'data' => UserResource::collection($dataQuery->get()),
-            ];
-        }
+        $dataRespon = [
+            'status' => true,
+            'message' => 'Pengambilan data dilakukan',
+            'data' => $data,
+        ];
         return response()->json($dataRespon);
     }
 
@@ -82,6 +77,17 @@ class UserController extends Controller
                 'nidn' => isset($validated['nidn']) ? $validated['nidn'] : null,
             ];
             $data['identitas'] = Identitas::create($data_identitas);
+
+
+            //simpan default user dosen
+            $role_id_dosen = Role::where('nama', 'DOSEN')->firstOrFail();
+            $data_user_role = [
+                'user_id' => $data['user']->id,
+                'role_id' => $role_id_dosen->id,
+            ];
+            $data['user_role'] = UserRole::create($data_user_role);
+
+
             DB::commit();
             return response()->json(['status' => true, 'message' => 'data baru berhasil dibuat', 'data' => $data], 201);
         } catch (\Exception $e) {

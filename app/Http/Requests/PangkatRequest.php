@@ -30,7 +30,12 @@ class PangkatRequest extends FormRequest
                 'string',
                 Rule::unique('pangkats', 'nama')->ignore($id), // Abaikan record dengan ID ini saat update
             ],
-            // 'nama' => 'required|string|max:255|unique:pangkats,nama,' . $id,
+            'gol' => [
+                'required',
+                'max:255',
+                'string',
+                Rule::unique('pangkats', 'gol')->ignore($id), // Abaikan record dengan ID ini saat update
+            ],
             'urut' => 'nullable|integer',
         ];
     }

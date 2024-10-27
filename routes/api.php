@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use App\Models\SuratPenugasan;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\WebController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
@@ -24,10 +25,12 @@ Route::get('daftar-jenis-penelitian', [JenisPenelitianController::class, 'index'
 Route::get('daftar-role', [RoleController::class, 'index']);
 Route::post('simpan-pendaftaran', [UserController::class, 'create']);
 
+
 Route::middleware('auth:sanctum')->group(function () {
-    Route::post('logout', [AuthController::class, 'logout']);
+    Route::get('cek-akses/{grup}', [WebController::class, 'cekAkses']);
+    Route::get('user-role-detail/{user_id}', [UserRoleController::class, 'getUserRole']);
     Route::get('role-user', [AuthController::class, 'roleUser']);
-    Route::get('token-cek/{user_id}', [AuthController::class, 'tokenCek']);
+    Route::post('logout', [AuthController::class, 'logout']);
 
     Route::resource('unit-kerja', UnitKerjaController::class);
     Route::resource('pangkat', PangkatController::class);

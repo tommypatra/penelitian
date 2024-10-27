@@ -47,26 +47,19 @@ class UploadDokumenPenelitiController extends Controller
             });
         }
 
-        $limit = $request->filled('limit') ? $request->limit : 0;
-        if ($limit) {
-            $data = $dataQuery->paginate($limit);
-            $resourceCollection = $data->getCollection()->map(function ($item) {
-                return new UploadDokumenPenelitiResource($item);
-            });
-            $data->setCollection($resourceCollection);
+        $default_limit = env('DEFAULT_LIMIT', 30);
+        $limit = $request->filled('limit') ? $request->limit : $default_limit;
+        $data = $dataQuery->paginate($limit);
+        $resourceCollection = $data->getCollection()->map(function ($item) {
+            return new UploadDokumenPenelitiResource($item);
+        });
+        $data->setCollection($resourceCollection);
 
-            $dataRespon = [
-                'status' => true,
-                'message' => 'Pengambilan data dilakukan',
-                'data' => $data,
-            ];
-        } else {
-            $dataRespon = [
-                'status' => true,
-                'message' => 'Pengambilan data dilakukan',
-                'data' => UploadDokumenPenelitiResource::collection($dataQuery->get()),
-            ];
-        }
+        $dataRespon = [
+            'status' => true,
+            'message' => 'Pengambilan data dilakukan',
+            'data' => $data,
+        ];
         return response()->json($dataRespon);
     }
 

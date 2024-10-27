@@ -17,14 +17,14 @@ class AuthController extends Controller
 
         $credentials = $request->validated();
         if (Auth::attempt($credentials)) {
-            $user = User::where('email', $request->email)->first();
+            $user = User::with('identitas')->where('email', $request->email)->first();
 
             $daftarAkses = daftarAkses($user->id);
             // dd($daftarAkses);
             // die;
             $token = $user->createToken('api_token')->plainTextToken;
             // $token = $user->createToken('api-token', ['user_id' => $user->id, 'user_group' => $daftarAkses])->plainTextToken;
-            $role_aksess = $daftarAkses[0]->role;
+            $role_akses = $daftarAkses[0]->role;
             $user_role_id = $daftarAkses[0]->user_role_id;
             $respon_data = [
                 'status' => true,
@@ -33,7 +33,7 @@ class AuthController extends Controller
                     'user' => $user,
                     'access_token' => $token,
                     'daftar_akses' => $daftarAkses,
-                    'role_akses' => $role_aksess,
+                    'role_akses' => $role_akses,
                     'user_role_id' => $user_role_id,
                     'token_type' => 'Bearer',
                 ]
@@ -81,10 +81,8 @@ class AuthController extends Controller
     {
         $user_id = $request->user() ? $request->user()->id : null;
         if ($user_id) {
-            if ($request->user()->tokens()->count() > 0) {
-                // $request->user()->tokens()->delete();
-                $request->user()->currentAccessToken()->delete();
-            }
+            // $request->user()->tokens()->delete();
+            $request->user()->currentAccessToken()->delete();
         }
         return response()->json(['message' => 'Logged out successfully'], 200);
     }

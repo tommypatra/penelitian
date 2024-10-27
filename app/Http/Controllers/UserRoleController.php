@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Role;
+use App\Models\User;
 use App\Models\UserRole;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -16,7 +18,7 @@ class UserRoleController extends Controller
      */
     public function index(Request $request)
     {
-        $dataQuery = UserRole::with(['user.identitas', 'role'])->orderBy('id', 'asc');
+        $dataQuery = UserRole::with(['user', 'role'])->orderBy('id', 'asc');
 
         // Filter berdasarkan pencarian
         if ($request->filled('search')) {
@@ -29,27 +31,29 @@ class UserRoleController extends Controller
                     });
             });
         }
-
-        $limit = $request->filled('limit') ? $request->limit : 0;
-        if ($limit) {
-            $data = $dataQuery->paginate($limit);
-            $resourceCollection = $data->getCollection()->map(function ($item) {
-                return new UserRoleResource($item);
+        // Filter berdasarkan pencarian
+        if ($request->filled('user_id')) {
+            $dataQuery->where(function ($query) use ($request) {
+                $query->whereHas('user', function ($userQuery) use ($request) {
+                    $userQuery->where('user_id', $request->user_id);
+                });
             });
-            $data->setCollection($resourceCollection);
-
-            $dataRespon = [
-                'status' => true,
-                'message' => 'Pengambilan data dilakukan',
-                'data' => $data,
-            ];
-        } else {
-            $dataRespon = [
-                'status' => true,
-                'message' => 'Pengambilan data dilakukan',
-                'data' => UserRoleResource::collection($dataQuery->get()),
-            ];
         }
+
+
+        $default_limit = env('DEFAULT_LIMIT', 30);
+        $limit = $request->filled('limit') ? $request->limit : $default_limit;
+        $data = $dataQuery->paginate($limit);
+        $resourceCollection = $data->getCollection()->map(function ($item) {
+            return new UserRoleResource($item);
+        });
+        $data->setCollection($resourceCollection);
+
+        $dataRespon = [
+            'status' => true,
+            'message' => 'Pengambilan data dilakukan',
+            'data' => $data,
+        ];
         return response()->json($dataRespon);
     }
 
@@ -80,6 +84,43 @@ class UserRoleController extends Controller
                 'status' => true,
                 'message' => 'Data ditemukan',
                 'data' => new UserRoleResource($dataQuery)
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => $e->getMessage(),
+                'data' => null,
+            ], 404);
+        }
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function getUserRole($user_id)
+    {
+        try {
+            $roles = Role::all(); // Mengambil semua role
+            $user = User::where('id', $user_id)->firstOrFail();
+            $user_role = UserRole::where("user_id", $user_id)->get(); // Mengambil user_role berdasarkan user_id
+            $akses = [];
+            foreach ($roles as $index_roles => $data_role) {
+                $akses[$index_roles] = $data_role;
+                $akses[$index_roles]['role_user'] = null;
+                foreach ($user_role as $index_user_role => $data_user_role) {
+                    if ($data_role->id === $data_user_role->role_id) {
+                        $akses[$index_roles]['role_user'] = $data_user_role;
+                    }
+                }
+            }
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Data ditemukan',
+                'data' => [
+                    'user' => $user,
+                    'user_role' => $akses,
+                ]
             ]);
         } catch (\Exception $e) {
             return response()->json([
