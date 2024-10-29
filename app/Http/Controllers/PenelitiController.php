@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\Peneliti;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -17,7 +18,7 @@ class PenelitiController extends Controller
      */
     public function index(Request $request)
     {
-        $dataQuery = Peneliti::with(['penelitian.dokumen.dokumenPeneliti', 'adminRole.user', 'userRole.user', 'suratPenugasan'])->orderBy('judul', 'asc');
+        $dataQuery = Peneliti::with(['penelitian.dokumen.dokumenPeneliti', 'adminRole.user', 'userRole.user.identitas', 'suratPenugasan'])->orderBy('judul', 'asc');
 
         //untuk dapat role id admin atau dosen yang sedang login
         $daftar_role = daftarAkses(auth()->user()->id);
@@ -37,6 +38,11 @@ class PenelitiController extends Controller
         }
 
         // Filter berdasarkan pencarian
+        if ($request->filled('id')) {
+            $dataQuery->where('id', $request->id);
+        }
+
+        // Filter berdasarkan pencarian
         if ($request->filled('search')) {
             $dataQuery->where(function ($query) use ($request) {
                 $query->whereHas('penelitian', function ($penelitianQuery) use ($request) {
@@ -49,7 +55,16 @@ class PenelitiController extends Controller
                         $userQuery->where('name', 'like', '%' . $request->search . '%');
                     });
             });
+        } elseif ($request->filled('tahap')) {
+            if ($request->tahap == "verifikasi") {
+                // $dataQuery->where('is_selesai', true)->whereNull('is_valid');
+                $dataQuery->where('is_selesai', true)->where(function ($query) {
+                    $query->where('is_valid', false)
+                        ->orWhereNull('is_valid');
+                });
+            }
         }
+
 
         $default_limit = env('DEFAULT_LIMIT', 30);
         $limit = $request->filled('limit') ? $request->limit : $default_limit;
@@ -97,7 +112,7 @@ class PenelitiController extends Controller
     public function show(string $id)
     {
         try {
-            $data = Peneliti::with(['penelitian.dokumen.dokumenPeneliti', 'adminRole.user', 'userRole.user', 'suratPenugasan']);
+            $data = Peneliti::with(['penelitian.dokumen.dokumenPeneliti', 'adminRole.user', 'userRole.user.identitas', 'suratPenugasan']);
             //untuk dapat role id admin atau dosen yang sedang login
             $daftar_role = daftarAkses(auth()->user()->id);
             $is_admin = cekRole($daftar_role, "Admin");
@@ -217,6 +232,7 @@ class PenelitiController extends Controller
             }
 
             $data_save['admin_role_id'] = $is_jfu;
+            $data_save['validated_at'] = Carbon::now()->toIso8601String();
             //jika tidak valid maka is_selesai akan terbuka
             if (!$data_save['is_valid']) {
                 $data_save['is_selesai'] = false;
@@ -227,7 +243,7 @@ class PenelitiController extends Controller
                 return response()->json(['status' => false, 'message' => 'penelitian ini belum selesai'], 422);
             }
 
-            $data->update($data_save);
+            $data->updateQuietly($data_save);
             DB::commit();
             return response()->json(['status' => true, 'message' => 'verifikasi penelitian berhasil dilakukan', 'data' => $data], 200);
         } catch (\Exception $e) {

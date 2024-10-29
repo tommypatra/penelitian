@@ -22,6 +22,7 @@ Route::post('auth-cek', [AuthController::class, 'index']);
 Route::get('daftar-unit-kerja', [UnitKerjaController::class, 'index']);
 Route::get('daftar-pangkat', [PangkatController::class, 'index']);
 Route::get('daftar-jenis-penelitian', [JenisPenelitianController::class, 'index']);
+Route::get('daftar-jadwal-penelitian', [PenelitianController::class, 'index']);
 Route::get('daftar-role', [RoleController::class, 'index']);
 Route::post('simpan-pendaftaran', [UserController::class, 'create']);
 

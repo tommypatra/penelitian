@@ -13,3 +13,13 @@ Route::get('/pangkat', [WebController::class, 'pangkat'])->name('pangkat');
 Route::get('/role', [WebController::class, 'role'])->name('role');
 Route::get('/jenis-penelitian', [WebController::class, 'jenisPenelitian'])->name('jenis-penelitian');
 Route::get('/user', [WebController::class, 'user'])->name('user');
+Route::get('/jadwal-penelitian', [WebController::class, 'jadwalPenelitian'])->name('jadwal-penelitian');
+Route::get('/dokumen-penelitian', [WebController::class, 'dokumenPenelitian'])->name('dokumen-penelitian');
+
+//untuk admin dan jfu lppm
+Route::get('/verifikasi', [WebController::class, 'verifikasi'])->name('verifikasi');
+
+
+//untuk dosen
+Route::get('/daftar-penelitian', [WebController::class, 'daftarPenelitian'])->name('daftar-penelitian');
+Route::get('/timeline-penelitan/{peneliti_id}', [WebController::class, 'timelinePenelitan'])->name('timeline-penelitian');

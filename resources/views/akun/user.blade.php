@@ -1,10 +1,7 @@
 @extends('akun.template')
 
 @section('head')
-  <title>Pengguna Aplikasi</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
-  
+  <title>Pengguna Aplikasi</title> 
   <style>
       .form-select {
         width: auto;
@@ -22,7 +19,7 @@
   <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4">
     <div>
       <h3 class="fw-bold mb-3">Pengguna</h3>
-      <h6 class="op-7 mb-2">Pengelolaan data pengguna aplikasi</h6>
+      <h6 class="op-7 mb-2">Pengelolaan pengguna aplikasi</h6>
     </div>
     <div class="ms-md-auto py-2 py-md-0">
       <div class="form-group">
@@ -62,8 +59,7 @@
                   <thead>
                     <tr>
                       <th>No</th>
-                      <th>Nama/ Jenis Kelamin/ Email</th>
-                      <th>No. HP</th>
+                      <th>Nama/ Jenis Kelamin/ Email/ HP</th>
                       <th>NIP/NIDN</th>
                       <th>Gol/ Pangkat</th>
                       <th>Unit Kerja</th>
@@ -247,8 +243,8 @@
               </div>
 
               <div class="modal-footer">
-                  <button type="submit" class="btn btn-primary"><i class="bi bi-floppy"></i> Simpan</button>
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bi bi-x-lg"></i> Tutup</button>
+                  <button type="submit" class="btn btn-primary"><i class="far fa-save"></i> Simpan</button>
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fas fa-door-closed"></i> Tutup</button>
               </div>
           </form>
 
@@ -260,7 +256,6 @@
 @section('script')
 <script src="{{ asset('js/crud.js') }}"></script>
 <script src="{{ asset('js/pagination.js') }}"></script>
-<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.full.min.js"></script>
 
 <script>
   const endpoint = base_url+'/api/user';
@@ -321,9 +316,9 @@
                               <div div style="display: flex; align-items: center;">
                                 <img src="${tmpfoto}" height="75px" style="margin-right: 10px; border-radius: 50%;">
                                 ${dt.name} (${dt.identitas[0].jenis_kelamin}) / ${dt.email}
+                                HP. ${dt.identitas[0].no_hp}
                               </div>
                             </td>
-                            <td>${dt.identitas[0].no_hp}</td>
                             <td>${nip+' '+nidn}</td>
                             <td>${pangkat_gol}</td>
                             <td>${unit_kerja} ${user_role}</td>
@@ -333,7 +328,7 @@
                                     <ul class="dropdown-menu">
                                         <li><a class="dropdown-item btn-tambah-akses" data-id="${dt.id}" href="javascript:;"><i class="fas fa-user-check"></i> Role User</a></li>
                                         <li><a class="dropdown-item btn-ganti" data-id="${dt.id}" href="javascript:;"><i class="far fa-edit"></i> Ganti</a></li>
-                                        <li><a class="dropdown-item btn-hapus" data-id="${dt.id}" href="javascript:;"><i class="fas fa-trash-alt"></i> Hapus</a></li>
+                                        <li><a class="dropdown-item btn-hapus" data-id="${dt.id}" href="javascript:;"><i class="fas fa-trash-alt"></i></i> Hapus</a></li>
                                     </ul>
                                 </div>
                             </td>

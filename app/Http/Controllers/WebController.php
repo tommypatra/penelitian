@@ -91,4 +91,29 @@ class WebController extends Controller
     {
         return view('akun.user');
     }
+
+    public function jadwalPenelitian()
+    {
+        return view('akun.jadwal_penelitian');
+    }
+
+    public function dokumenPenelitian()
+    {
+        return view('akun.dokumen_penelitian');
+    }
+
+    public function daftarPenelitian()
+    {
+        return view('akun.daftar_penelitian');
+    }
+
+    public function timelinePenelitan($peneliti_id)
+    {
+        return view('akun.timeline', ['peneliti_id' => $peneliti_id]);
+    }
+
+    public function verifikasi()
+    {
+        return view('akun.verifikasi');
+    }
 }

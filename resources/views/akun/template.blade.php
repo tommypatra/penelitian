@@ -104,17 +104,17 @@
                   <div class="collapse" id="menu-penelitian">
                     <ul class="nav nav-collapse">
                       <li>
-                        <a href="components/avatars.html">
+                        <a href="{{ route('jadwal-penelitian') }}">
                           <span class="sub-item">Jadwal</span>
                         </a>
                       </li>
                       <li>
-                        <a href="components/buttons.html">
+                        <a href="{{ route('dokumen-penelitian') }}">
                           <span class="sub-item">Dokumen</span>
                         </a>
                       </li>
                       <li>
-                        <a href="components/gridsystem.html">
+                        <a href="{{ route('verifikasi') }}">
                           <span class="sub-item">Verifikasi</span>
                         </a>
                       </li>
@@ -222,7 +222,7 @@
                   <h4 class="text-section">Dosen</h4>
                 </li>
                 <li class="nav-item">
-                  <a href="javascript:;">
+                  <a href="{{ route('daftar-penelitian') }}">
                     <i class="fab fa-readme"></i>
                     <p>Penelitian</p>
                   </a>
@@ -501,8 +501,9 @@
     <script>
       var user_name = localStorage.getItem('user_name');
       var role_akses = localStorage.getItem('role_akses');
+      var user_role_id = localStorage.getItem('user_role_id');
       var user_email = localStorage.getItem('user_email');
-      var user_foto = localStorage.getItem('user_foto');
+      var user_foto = base_url+'/'+localStorage.getItem('user_foto');
 
       function setAkses(vrole_akses) {
         ajaxRequest(base_url + '/api/cek-akses/' + vrole_akses, 'GET', null, false,

@@ -23,7 +23,7 @@ class DokumenPenelitianController extends Controller
         } else {
             $dataRespon = [
                 'status' => false,
-                'message' => 'tentukan nilai penelitian_id terlebih dahulu',
+                'message' => 'tentukan id penelitian terlebih dahulu',
                 'data' => null,
             ];
             return response()->json($dataRespon);

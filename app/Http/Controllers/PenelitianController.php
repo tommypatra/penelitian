@@ -16,10 +16,23 @@ class PenelitianController extends Controller
      */
     public function index(Request $request)
     {
-        $dataQuery = Penelitian::with(['jenisPenelitian', 'userRole.user'])->orderBy('nama', 'asc');
+        $dataQuery = Penelitian::with(['jenisPenelitian', 'userRole.user', 'dokumen'])
+            ->with(['peneliti' => function ($query) use ($request) {
+                if ($request->filled('user_role_id')) {
+                    $query->where('user_role_id', $request->user_role_id);
+                }
+            }])
+            ->orderBy('tahun', 'desc')
+            ->orderBy('daftar_mulai', 'desc')
+            ->orderBy('nama', 'asc');
 
         if ($request->filled('search')) {
-            $dataQuery->where('nama', 'like', '%' . $request->search . '%');
+            $dataQuery->where('nama', 'like', '%' . $request->search . '%')
+                ->orWhere('tahun', $request->search);
+        }
+
+        if ($request->filled('tahun')) {
+            $dataQuery->where('tahun', $request->tahun);
         }
 
         $default_limit = env('DEFAULT_LIMIT', 30);

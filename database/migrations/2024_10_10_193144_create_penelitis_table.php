@@ -27,6 +27,8 @@ return new class extends Migration
             $table->foreign('admin_role_id')->references('id')->on('user_roles')->restrictOnDelete();
 
             $table->unique(['user_role_id', 'penelitian_id']);
+
+            $table->timestamp('validated_at')->nullable();
             $table->timestamps();
         });
     }

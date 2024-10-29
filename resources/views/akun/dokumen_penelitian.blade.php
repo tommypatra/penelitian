@@ -1,21 +1,16 @@
 @extends('akun.template')
 
 @section('head')
-  <title>Pangkat</title>
-  <style>
-      .form-select {
-        width: auto;
-        min-width: 175px; /* Tetap tetapkan batas minimal */      
-      }
-  </style>
+  <title>Dokumen Penelitian</title> 
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.14.0/themes/base/jquery-ui.css">
 @endsection
 
 @section('container')
 <div class="page-inner">
   <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4">
     <div>
-      <h3 class="fw-bold mb-3">Pangkat</h3>
-      <h6 class="op-7 mb-2">Pengelolaan pangkat</h6>
+      <h3 class="fw-bold mb-3">Dokumen Penelitian</h3>
+      <h6 class="op-7 mb-2">Pengelolaan dokumen penelitian</h6>
     </div>
     <div class="ms-md-auto py-2 py-md-0">
       <div class="form-group">
@@ -34,9 +29,18 @@
   <div class="row">
     <div class="col-md-12">
       <div class="card card-round">
+        
+
+        <div class="form-group">
+          <div class="input-group">
+            <input type="number" class="form-control" id="tahun" style="width: 25%;" placeholder="tahun">
+            <select class="form-select" id="penelitian" name="penelitian" style="width: 75%;"></select>
+          </div>
+        </div>
+
         <div class="card-header">
           <div class="card-head-row card-tools-still-right">
-            <h4 class="card-title">Data Golongan Pangkat</h4>
+            <h4 class="card-title">Data Dokumen Penelitian</h4>
             <div class="card-tools">
               <a href="#" class="btn btn-primary btn-round" id="btn-tambah"><i class="fas fa-plus"></i></a>
               <a href="#" class="btn btn-primary btn-round" id="btn-refresh"><i class="fas fa-sync-alt"></i></a>
@@ -55,9 +59,10 @@
                   <thead>
                     <tr>
                       <th>No</th>
-                      <th>Golongan</th>
-                      <th>Pangkat</th>
-                      <th>Nomor Urut</th>
+                      <th>Jenis</th>
+                      <th>Nama/ Type File</th>
+                      <th>Wajib</th>
+                      <th>Keterangan</th>
                       <th>Aksi</th>
                     </tr>
                   </thead>
@@ -84,37 +89,62 @@
 
 @section('modal')
 <div class="modal fade" id="modalForm" tabindex="-1" aria-labelledby="modalFormLabel" aria-hidden="true">
-  <div class="modal-dialog ">
+  <div class="modal-dialog modal-xl">
       <div class="modal-content">
           <form id="form">
               <input type="hidden" id="id" name="id">
+              <input type="hidden" id="penelitian_id" name="penelitian_id">
 
               <div class="modal-header">
-                  <h5 class="modal-title" id="modalFormLabel">Form Pangkat</h5>
+                  <h5 class="modal-title" id="modalFormLabel">Form Dokumen Penelitian</h5>
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
 
               <div class="modal-body">
 
                 <div class="row">
-                  <div class="col-lg-12">
-                    
+                  <div class="col-lg-4">                    
                     <div class="form-group">
-                      <label for="gol">Golongan</label>
-                      <input type="text" class="form-control" id="gol" name="gol" placeholder="golongan" required>
+                      <label for="jenis">Jenis</label>
+                      <select class="form-select" id="jenis" name="jenis" required>
+                        <option value="syarat">syarat</option>
+                        <option value="output">output</option>
+                      </select>
                     </div>
-
-                    <div class="form-group">
-                      <label for="nama">Pangkat</label>
-                      <input type="text" class="form-control" id="nama" name="nama" placeholder="nama pangkat" required>
-                    </div>
-
-                    <div class="form-group">
-                      <label for="urut">Nomor Urut</label>
-                      <input type="number" class="form-control" id="urut" name="urut" placeholder="nomor urut" required>
-                    </div>
-
                   </div>
+                  <div class="col-lg-8">
+                    <div class="form-group">
+                      <label for="nama">Nama Dokumen</label>
+                      <input type="text" class="form-control" id="nama" name="nama" placeholder="nama" required>
+                    </div>
+                  </div>                        
+                </div>
+
+                <div class="row">
+                  <div class="col-lg-4">                    
+                    <div class="form-group">
+                      <label for="tipe_file">Type File</label>
+                      <select class="form-select" id="tipe_file" name="tipe_file" required>
+                        <option value="pdf">PDF</option>
+                        <option value="gambar">Gambar</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-lg-4">
+                    <div class="form-group">
+                      <label for="is_wajib">Wajib</label>
+                      <select class="form-select" id="is_wajib" name="is_wajib" required>
+                        <option value="1">Ya</option>
+                        <option value="0">Tidak</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-lg-12">
+                    <div class="form-group">
+                      <label for="keterangan">Keterangan</label>
+                      <textarea class="form-control" rows="3" id="keterangan" name="keterangan" ></textarea>
+                    </div>
+                  </div>                  
                 </div>
 
               </div>
@@ -131,16 +161,46 @@
 @endsection
 
 @section('script')
+<script src="https://code.jquery.com/ui/1.14.0/jquery-ui.js"></script>
+
 <script src="{{ asset('js/crud.js') }}"></script>
 <script src="{{ asset('js/pagination.js') }}"></script>
 
 <script>
-  const endpoint = base_url+'/api/pangkat';
+  const endpoint = base_url+'/api/dokumen-penelitian';
   var page = 1;
 
   $(document).ready(function() {
 
-    dataLoad();
+    $('#tahun').val("{{ date('Y') }}");
+    
+    loadPenelitian();
+    function loadPenelitian() {
+      var tahun = $("#tahun").val();
+      var url = base_url + '/api/penelitian?page=1&limit=1000&tahun='+tahun;
+      $('#penelitian').empty();
+      $('#penelitian').append(
+        $('<option>', {value: '',text: '-Pilih-'})
+      );
+
+      fetchData(url, function(response) {
+        if (response.data.data.length > 0) {
+          $.each(response.data.data, function(index, dt) {
+            $('#penelitian').append(
+              $('<option>', {value: dt.id,text: `${dt.nama} (${dt.jenis_penelitian.nama})`})
+            );
+          });
+        }
+      });
+    }
+
+    $('#tahun').change(function(){
+      loadPenelitian();
+    });
+
+    $('#penelitian').on('change', function() {
+      dataLoad();
+    });    
 
     function renderData(response) {
         const dataList = $('#data-list');
@@ -151,11 +211,13 @@
         pagination.empty();
         if (data.length > 0) {
             $.each(data, function(index, dt) {
+                const is_wajib = (dt.is_wajib)?"Ya":"Tidak";
                 const row = `<tr>
                             <td>${no++}</td>
-                            <td>${dt.gol}</td>
-                            <td>${dt.nama}</td>
-                            <td>${dt.urut}</td>
+                            <td>${dt.jenis}</td>
+                            <td>${dt.nama} (${dt.tipe_file})</td>
+                            <td>${is_wajib}</td>
+                            <td>${labelWeb(dt.keterangan)}</td>
                             <td>
                                 <div class="dropdown">
                                     <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"></button>
@@ -172,9 +234,11 @@
         }
     }    
 
+    
     function dataLoad() {
       var search = $('#search-input').val();
-      var url = endpoint + '?page=' + page + '&search=' + search + '&limit=' + vLimit;
+      var vPenelitian_id = $('#penelitian').val();
+      var url = endpoint + '?page=' + page + '&search=' + search + '&limit=' + vLimit+'&penelitian_id='+ vPenelitian_id;
 
       fetchData(url, function(response) {
           renderData(response);
@@ -209,6 +273,7 @@
     function formReset(){
       $('#form').trigger('reset');
       $('#form input[type="hidden"]').val('');
+      $('#penelitian_id').val($('#penelitian').val());
     }
 
     // Handle page change
@@ -223,6 +288,7 @@
         const id = $('#id').val();
         const type = (id === '') ? 'POST' : 'PUT';
         const url = (id === '') ? endpoint : endpoint + '/' + id;
+
         saveData(url, type, $(form).serialize(), function(response) {
           //jika berhasil
           toastr.success('operasi berhasil dilakukan!', 'berhasil');
@@ -238,10 +304,13 @@
     $(document).on('click', '.btn-ganti', function() {
       const id = $(this).data('id');
       showDataById(endpoint, id, function(response) {
+        $('#penelitian_id').val($('#penelitian').val());
         $('#id').val(response.data.id);
-        $('#gol').val(response.data.gol);
         $('#nama').val(response.data.nama);
-        $('#urut').val(response.data.urut);
+        $('#keterangan').val(response.data.keterangan);
+        $('#jenis').val(response.data.jenis);
+        $('#tipe_file').val(response.data.tipe_file);
+        $('#is_wajib').val(response.data.is_wajib);
         showModalForm();
       });
     });

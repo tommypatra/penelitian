@@ -1,21 +1,16 @@
 @extends('akun.template')
 
 @section('head')
-  <title>Pangkat</title>
-  <style>
-      .form-select {
-        width: auto;
-        min-width: 175px; /* Tetap tetapkan batas minimal */      
-      }
-  </style>
+  <title>Jadwal Penelitian</title> 
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.14.0/themes/base/jquery-ui.css">
 @endsection
 
 @section('container')
 <div class="page-inner">
   <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4">
     <div>
-      <h3 class="fw-bold mb-3">Pangkat</h3>
-      <h6 class="op-7 mb-2">Pengelolaan pangkat</h6>
+      <h3 class="fw-bold mb-3">Jadwal Penelitian</h3>
+      <h6 class="op-7 mb-2">Pengelolaan jadwal penelitian</h6>
     </div>
     <div class="ms-md-auto py-2 py-md-0">
       <div class="form-group">
@@ -36,7 +31,7 @@
       <div class="card card-round">
         <div class="card-header">
           <div class="card-head-row card-tools-still-right">
-            <h4 class="card-title">Data Golongan Pangkat</h4>
+            <h4 class="card-title">Data Jadwal Penelitian</h4>
             <div class="card-tools">
               <a href="#" class="btn btn-primary btn-round" id="btn-tambah"><i class="fas fa-plus"></i></a>
               <a href="#" class="btn btn-primary btn-round" id="btn-refresh"><i class="fas fa-sync-alt"></i></a>
@@ -55,9 +50,10 @@
                   <thead>
                     <tr>
                       <th>No</th>
-                      <th>Golongan</th>
-                      <th>Pangkat</th>
-                      <th>Nomor Urut</th>
+                      <th>Penelitian (Tahun)</th>
+                      <th>Jenis Penelitian</th>
+                      <th>Jadwal Pendaftaran</th>
+                      <th>Buka Jadwal</th>
                       <th>Aksi</th>
                     </tr>
                   </thead>
@@ -84,37 +80,65 @@
 
 @section('modal')
 <div class="modal fade" id="modalForm" tabindex="-1" aria-labelledby="modalFormLabel" aria-hidden="true">
-  <div class="modal-dialog ">
+  <div class="modal-dialog modal-xl">
       <div class="modal-content">
           <form id="form">
               <input type="hidden" id="id" name="id">
+              <input type="hidden" id="user_role_id" name="user_role_id">
 
               <div class="modal-header">
-                  <h5 class="modal-title" id="modalFormLabel">Form Pangkat</h5>
+                  <h5 class="modal-title" id="modalFormLabel">Form Jadwal Penelitian</h5>
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
 
               <div class="modal-body">
 
                 <div class="row">
-                  <div class="col-lg-12">
-                    
+                  <div class="col-lg-4">                    
                     <div class="form-group">
-                      <label for="gol">Golongan</label>
-                      <input type="text" class="form-control" id="gol" name="gol" placeholder="golongan" required>
+                      <label for="tahun">Tahun</label>
+                      <input type="number" class="form-control" id="tahun" name="tahun" placeholder="tahun" value="{{ date('Y') }}" required>
                     </div>
-
-                    <div class="form-group">
-                      <label for="nama">Pangkat</label>
-                      <input type="text" class="form-control" id="nama" name="nama" placeholder="nama pangkat" required>
-                    </div>
-
-                    <div class="form-group">
-                      <label for="urut">Nomor Urut</label>
-                      <input type="number" class="form-control" id="urut" name="urut" placeholder="nomor urut" required>
-                    </div>
-
                   </div>
+                  <div class="col-lg-8">
+                    <div class="form-group">
+                      <label for="nama">Nama Kegiatan</label>
+                      <input type="text" class="form-control" id="nama" name="nama" placeholder="nama" required>
+                    </div>
+                  </div>
+                  
+                
+                  <div class="col-lg-12">
+                    <div class="form-group">
+                      <label for="jenis_penelitian_id">Jenis Penelitian</label>
+                      <select class="form-select" id="jenis_penelitian_id" name="jenis_penelitian_id" ></select>
+                    </div>
+                  </div>
+
+                </div>
+
+                <div class="row">
+                  <div class="col-lg-4">                    
+                    <div class="form-group">
+                      <label for="daftar_mulai">Pendaftaran Mulai</label>
+                      <input type="text" class="form-control datepicker" id="daftar_mulai" name="daftar_mulai" placeholder="tanggal" value="{{ date('Y-m-d') }}" required>
+                    </div>
+                  </div>
+                  <div class="col-lg-4">
+                    <div class="form-group">
+                      <label for="daftar_selesai">Pendaftaran Selesai</label>
+                      <input type="text" class="form-control datepicker" id="daftar_selesai" name="daftar_selesai" placeholder="tanggal" value="{{ date('Y-m-d') }}" required>
+                    </div>
+                  </div>
+                  <div class="col-lg-4">
+                    <div class="form-group">
+                      <label for="daftar_terbuka">Buka Pendaftaran</label>
+                      <select class="form-select" id="daftar_terbuka" name="daftar_terbuka" >
+                        <option value="0">Tidak</option>
+                        <option value="1">Ya</option>
+                      </select>
+                    </div>
+                  </div>                  
                 </div>
 
               </div>
@@ -131,16 +155,41 @@
 @endsection
 
 @section('script')
+<script src="https://code.jquery.com/ui/1.14.0/jquery-ui.js"></script>
+
 <script src="{{ asset('js/crud.js') }}"></script>
 <script src="{{ asset('js/pagination.js') }}"></script>
 
 <script>
-  const endpoint = base_url+'/api/pangkat';
+  const endpoint = base_url+'/api/penelitian';
   var page = 1;
 
   $(document).ready(function() {
 
     dataLoad();
+
+    $(".datepicker").datepicker({
+      dateFormat: "yy-mm-dd"
+    });
+
+    loadDataPenelitian();
+    function loadDataPenelitian() {
+      var url = base_url + '/api/jenis-penelitian?page=1&limit=1000';
+      $('#jenis_penelitian_id').empty();
+      fetchData(url, function(response) {
+        if (response.data.data.length > 0) {
+          $.each(response.data.data, function(index, dt) {
+            $('#jenis_penelitian_id').append(
+              $('<option>', {value: dt.id,text: dt.nama})
+            );
+          });
+        } else {
+          $('#jenis_penelitian_id').append(
+            $('<option>', {value: '',text: 'Tidak ada data tersedia'})
+          );
+        }
+      });
+    }
 
     function renderData(response) {
         const dataList = $('#data-list');
@@ -151,11 +200,13 @@
         pagination.empty();
         if (data.length > 0) {
             $.each(data, function(index, dt) {
+                const terbuka = (dt.daftar_terbuka)?"Terbuka":"Tertutup";
                 const row = `<tr>
                             <td>${no++}</td>
-                            <td>${dt.gol}</td>
-                            <td>${dt.nama}</td>
-                            <td>${dt.urut}</td>
+                            <td>${dt.nama} (${dt.tahun})</td>
+                            <td>${dt.jenis_penelitian.nama}</td>
+                            <td>${dt.daftar_mulai} sd ${dt.daftar_selesai}</td>
+                            <td>${terbuka}</td>
                             <td>
                                 <div class="dropdown">
                                     <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"></button>
@@ -172,6 +223,7 @@
         }
     }    
 
+    
     function dataLoad() {
       var search = $('#search-input').val();
       var url = endpoint + '?page=' + page + '&search=' + search + '&limit=' + vLimit;
@@ -209,6 +261,7 @@
     function formReset(){
       $('#form').trigger('reset');
       $('#form input[type="hidden"]').val('');
+      $('#user_role_id').val(user_role_id);
     }
 
     // Handle page change
@@ -223,6 +276,7 @@
         const id = $('#id').val();
         const type = (id === '') ? 'POST' : 'PUT';
         const url = (id === '') ? endpoint : endpoint + '/' + id;
+
         saveData(url, type, $(form).serialize(), function(response) {
           //jika berhasil
           toastr.success('operasi berhasil dilakukan!', 'berhasil');
@@ -239,9 +293,13 @@
       const id = $(this).data('id');
       showDataById(endpoint, id, function(response) {
         $('#id').val(response.data.id);
-        $('#gol').val(response.data.gol);
+        $('#user_role_id').val(user_role_id);
         $('#nama').val(response.data.nama);
-        $('#urut').val(response.data.urut);
+        $('#tahun').val(response.data.tahun);
+        $('#jenis_penelitian_id').val(response.data.jenis_penelitian_id);
+        $('#daftar_mulai').val(response.data.daftar_mulai);
+        $('#daftar_mulai').val(response.data.daftar_mulai);
+        $('#daftar_terbuka').val(response.data.daftar_terbuka);
         showModalForm();
       });
     });

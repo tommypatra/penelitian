@@ -1,16 +1,14 @@
-function myFormatDate(dateString){
-    var date = new Date(dateString);
-    // Periksa apakah objek Date valid
-    if (isNaN(date.getTime())) {
-        return 'Invalid Date';
-    }    
-    var year = date.getFullYear();
-    var month = String(date.getMonth() + 1).padStart(2, '0');
-    var day = String(date.getDate()).padStart(2, '0');
-    var hours = String(date.getHours()).padStart(2, '0');
-    var minutes = String(date.getMinutes()).padStart(2, '0');
-    var seconds = String(date.getSeconds()).padStart(2, '0');
-    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+function formatTanggal(tanggal) {
+    const date = new Date(tanggal);
+    
+    const tahun = date.getFullYear();
+    const bulan = String(date.getMonth() + 1).padStart(2, '0'); // Bulan dimulai dari 0
+    const hari = String(date.getDate()).padStart(2, '0');
+    const jam = String(date.getHours()).padStart(2, '0');
+    const menit = String(date.getMinutes()).padStart(2, '0');
+    const detik = String(date.getSeconds()).padStart(2, '0');
+
+    return `${tahun}-${bulan}-${hari} ${jam}:${menit}:${detik}`;
 }
 
 function forceLogout(){
@@ -35,6 +33,7 @@ function ajaxRequest(url, method, data=null, showModal=false, successCallback, e
         data.forEach(function(value, key) {
             if (value instanceof File) {
                 hasFile = true;
+                
             }
         });
     }
@@ -51,6 +50,9 @@ function ajaxRequest(url, method, data=null, showModal=false, successCallback, e
     var ajaxOptions = {
         url: url,
         type: method,
+        data: data,
+        contentType: hasFile ? false : 'application/x-www-form-urlencoded; charset=UTF-8',
+        processData: !hasFile,        
         success: function(response) {
             if (successCallback) {
                 successCallback(response);
@@ -80,14 +82,14 @@ function ajaxRequest(url, method, data=null, showModal=false, successCallback, e
         }
     };
 
-    if (data !== null) {
-        ajaxOptions.data = data;
-    }
+    // if (data !== null) {
+    //     ajaxOptions.data = data;
+    // }
 
-    if (hasFile) {
-        ajaxOptions.contentType = false;
-        ajaxOptions.processData = false;
-    }
+    // if (hasFile) {
+    //     ajaxOptions.contentType = false;
+    //     ajaxOptions.processData = false;
+    // }
     
 
     $.ajax(ajaxOptions);
@@ -161,3 +163,4 @@ function renderSelect(response, element, idColumn, displayColumns) {
         }));
     });
 }
+
