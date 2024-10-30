@@ -18,15 +18,17 @@ return new class extends Migration
             $table->foreignId('peneliti_id');
             $table->foreign('peneliti_id')->references('id')->on('penelitis')->restrictOnDelete();
             $table->date('tanggal_surat');
-            $table->string('nomor_surat');
+            $table->string('nomor_surat')->nullable();
 
             //untuk validasi berkas
+            // $table->boolean('is_diajukan')->nullable();
             $table->boolean('is_disetujui')->nullable();
             $table->string('catatan')->nullable();
             $table->foreignId('ketua_lppm_role_id')->nullable();
             $table->foreign('ketua_lppm_role_id')->references('id')->on('user_roles')->restrictOnDelete();
-            $table->unique(['nomor_surat']);
+            // $table->unique(['nomor_surat']);
             $table->unique(['peneliti_id']);
+            $table->timestamp('persetujuan_at')->nullable();
             $table->timestamps();
         });
     }

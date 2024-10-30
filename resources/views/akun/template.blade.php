@@ -114,11 +114,6 @@
                         </a>
                       </li>
                       <li>
-                        <a href="{{ route('verifikasi') }}">
-                          <span class="sub-item">Verifikasi</span>
-                        </a>
-                      </li>
-                      <li>
                         <a href="components/panels.html">
                           <span class="sub-item">Output</span>
                         </a>
@@ -127,7 +122,13 @@
                   </div>
                 </li>
                 <li class="nav-item">
-                  <a href="javascript:;">
+                  <a href="{{ route('verifikasi') }}">
+                    <i class="fas fa-user-shield"></i>
+                    <p>Verifikasi</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="{{ route('pengelola-surat-penugasan') }}">
                     <i class="far fa-file-alt"></i>
                     <p>Surat Penugasan</p>
                   </a>
@@ -208,7 +209,7 @@
                   </a>
                 </li>              
                 <li class="nav-item">
-                  <a href="javascript:;">
+                  <a href="{{ route('pengelola-surat-penugasan') }}">
                     <i class="far fa-file-alt"></i>
                     <p>Surat Penugasan</p>
                   </a>

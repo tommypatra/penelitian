@@ -10,6 +10,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\PenelitiRequest;
 use App\Http\Requests\VerifikasiRequest;
 use App\Http\Resources\PenelitiResource;
+use App\Models\SuratPenugasan;
 
 class PenelitiController extends Controller
 {
@@ -242,10 +243,23 @@ class PenelitiController extends Controller
             if (!$data->is_selesai) {
                 return response()->json(['status' => false, 'message' => 'penelitian ini belum selesai'], 422);
             }
-
             $data->updateQuietly($data_save);
+            $respon['peneliti'] = $data;
+
+            $data['surat'] = [];
+            if ($data->is_valid) {
+                $data_save_surat = [
+                    // 'nomor_surat' => "....../In.23/L.I/TL.00/" . date('m') . "/" . date('Y'),
+                    // 'nomor_surat' => "...",
+                    'user_role_id' => $data->admin_role_id,
+                    'peneliti_id' => $data->id,
+                    'tanggal_surat' => date('Y-m-d'),
+                ];
+                $respon['surat'] = SuratPenugasan::create($data_save_surat);
+            }
+
             DB::commit();
-            return response()->json(['status' => true, 'message' => 'verifikasi penelitian berhasil dilakukan', 'data' => $data], 200);
+            return response()->json(['status' => true, 'message' => 'verifikasi penelitian berhasil dilakukan', 'data' => $respon], 200);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['status' => false, 'message' => 'terjadi kesalahan saat verifikasi penelitian : ' . $e->getMessage(), 'data' => null], 500);

@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\SuratPenugasan;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SuratPenugasanRequest;
 use App\Http\Resources\SuratPenugasanResource;
+use App\Http\Requests\PenomoranSuratPenugasanRequest;
 use App\Http\Requests\PersetujuanSuratPenugasanRequest;
 
 class SuratPenugasanController extends Controller
@@ -17,7 +19,7 @@ class SuratPenugasanController extends Controller
      */
     public function index(Request $request)
     {
-        $dataQuery = SuratPenugasan::with(['peneliti.penelitian', 'userRole.user'])->orderBy('is_disetujui', 'desc')->orderBy('tanggal_surat', 'desc');
+        $dataQuery = SuratPenugasan::with(['peneliti.userRole.user.identitas', 'peneliti.penelitian', 'userRole.user'])->orderBy('is_disetujui', 'desc')->orderBy('tanggal_surat', 'desc');
 
         //untuk dapat role id admin atau jfu yang sedang login
         // $daftar_role = daftarAkses(auth()->user()->id);
@@ -26,6 +28,23 @@ class SuratPenugasanController extends Controller
         // if (!$is_admin || !$is_jfu) {
         //     return response()->json(['status' => false, 'message' => 'Akses ditolak'], 403);
         // }
+
+        // Filter berdasarkan pencarian
+        if ($request->filled('status')) {
+            if ($request->status == 'proses')
+                $dataQuery->whereNull('is_disetujui');
+            elseif ($request->status == 'penomoran')
+                $dataQuery->where('is_disetujui', true)
+                    ->where(function ($subQuery) {
+                        $subQuery->whereNull('nomor_surat')->orWhere('nomor_surat', "");
+                    });
+            // $dataQuery->where('is_disetujui', true)->where('nomor_surat', "");
+            elseif ($request->status == 'selesai')
+                $dataQuery->where('is_disetujui', false)
+                    ->orWhere(function ($subQuery) {
+                        $subQuery->where('is_disetujui', true)->where('nomor_surat', '!=', "");
+                    });
+        }
 
         // Filter berdasarkan pencarian
         if ($request->filled('search')) {
@@ -153,7 +172,36 @@ class SuratPenugasanController extends Controller
             //untuk dapat role id admin atau dosen yang sedang login
             $daftar_role = daftarAkses(auth()->user()->id);
             $is_admin = cekRole($daftar_role, "Admin");
-            $is_ketua_lppm = cekRole($daftar_role, "Ketua LPPM");
+            $is_ketua_lppm = cekRole($daftar_role, "Ketua");
+
+            // if (!$is_admin && $is_ketua_lppm !== $validated['ketua_lppm_role_id']) {
+            if ($is_ketua_lppm !== (int)$validated['ketua_lppm_role_id']) {
+                return response()->json(['status' => false, 'message' => 'Akses ditolak.'], 403);
+            }
+
+            $data = SuratPenugasan::where('id', $id)->firstOrFail();
+            $data_save = $request->validated();
+            $data_save['persetujuan_at'] = Carbon::now()->toIso8601String();;
+            $data->updateQuietly($data_save);
+            DB::commit();
+            return response()->json(['status' => true, 'message' => 'persetujuan penugasan berhasil dilakukan', 'data' => $data], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['status' => false, 'message' => 'terjadi kesalahan saat persetujuan penugasan : ' . $e->getMessage(), 'data' => null], 500);
+        }
+    }
+
+
+    //penomoran surat penugasan ketua lppm
+    public function penomoranSuratPenugasan(PenomoranSuratPenugasanRequest $request, string $id)
+    {
+        try {
+            DB::beginTransaction();
+            $validated = $request->validated();
+            //untuk dapat role id admin atau dosen yang sedang login
+            $daftar_role = daftarAkses(auth()->user()->id);
+            $is_admin = cekRole($daftar_role, "Admin");
+            $is_ketua_lppm = cekRole($daftar_role, "Ketua");
 
             if (!$is_admin && $is_ketua_lppm !== $validated['ketua_lppm_role_id']) {
                 return response()->json(['status' => false, 'message' => 'Akses ditolak.'], 403);
@@ -162,10 +210,10 @@ class SuratPenugasanController extends Controller
             $data = SuratPenugasan::where('id', $id)->firstOrFail();
             $data->update($request->validated());
             DB::commit();
-            return response()->json(['status' => true, 'message' => 'persetujuan penugasan berhasil dilakukan', 'data' => $data], 200);
+            return response()->json(['status' => true, 'message' => 'penomoran surat berhasil dilakukan', 'data' => $data], 200);
         } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json(['status' => false, 'message' => 'terjadi kesalahan saat persetujuan penugasan : ' . $e->getMessage(), 'data' => null], 500);
+            return response()->json(['status' => false, 'message' => 'terjadi kesalahan saat nomor_surat : ' . $e->getMessage(), 'data' => null], 500);
         }
     }
 }

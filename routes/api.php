@@ -48,6 +48,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('finalisasi-peneliti/{id}', [PenelitiController::class, 'finalisasiPeneliti']);
 
     //khusus admin dan ketua lppm
+    Route::put('penomoran-surat-penugasan/{id}', [SuratPenugasanController::class, 'penomoranSuratPenugasan']);
     Route::put('persetujuan-surat-penugasan/{id}', [SuratPenugasanController::class, 'persetujuanSuratPenugasan']);
 
     //khusus admin dan jfu

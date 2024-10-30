@@ -92,11 +92,11 @@
         <li class="timeline-inverted">
           <div class="timeline-panel">
             <div class="timeline-heading">
-              <h4 class="timeline-title">Pembuatan Surat Penugasan</h4>
+              <h4 class="timeline-title">Persetujuan Kepala LPPM</h4>
             </div>
             <div class="timeline-body">
-              <p>
-                Admin/ JFU LPPM akan membuat surat penugasan yang ditanda tangani menggunakan ARCode oleh Kepala LPPM
+              <p id="persetujuan-kepala-lppm">
+                Admin/ JFU LPPM memverifikasi terlebih dahulu sebelum melakukan pengajuan surat penugasan kepada Ketua LPPM
               </p>
             </div>
           </div>
@@ -107,11 +107,11 @@
           </div>
           <div class="timeline-panel">
             <div class="timeline-heading">
-              <h4 class="timeline-title">Persetujuan Kepala LPPM</h4>
+              <h4 class="timeline-title">Penomoran Surat</h4>
             </div>
             <div class="timeline-body">
-              <p>
-                Menunggu pengajuan surat dari Admin/ JFU LPPM  
+              <p id="penomoran-surat">
+                Menunggu tahapan persetujuan ketua LPPM  
               </p>
             </div>
           </div>
@@ -122,8 +122,8 @@
               <h4 class="timeline-title">Download Surat Penugasan</h4>
             </div>
             <div class="timeline-body">
-              <p>
-                Anda dapat mendownload surat penugasan di bawah ini 
+              <p id="download-surat">
+                Belum bisa di download, masih ada proses belum selesai 
               </p>
             </div>
           </div>
@@ -137,7 +137,7 @@
               <h4 class="timeline-title">Lengkapi Output</h4>
             </div>
             <div class="timeline-body">
-              <p>
+              <p id="output-penelitian">
                 Setelah penelitian selesai dilakukan, mohon upload output sebagai berikut.
               </p>
             </div>
@@ -256,6 +256,7 @@
     }
 
     function renderData(response) {
+      const surat_penugasan = response.surat_penugasan;
       $('#tanggal-daftar').text(timeAgo(response.created_at));
       $('#judul').val(response.judul);
       $('#id').val(response.id);
@@ -263,7 +264,19 @@
       $('#user_role_id').val(response.user_role_id);
       $('#nama-penelitian').text(`${response.penelitian.nama} (tahun ${response.penelitian.tahun})`);
 
-      
+      if(surat_penugasan.length>0){
+        if(surat_penugasan[0].is_disetujui==null){
+          $('#persetujuan-kepala-lppm').text(`Menunggu persetujuan oleh Ketua LPPM ${timeAgo(surat_penugasan[0].created_at)}`);
+        }else if(surat_penugasan[0].is_disetujui){
+          $('#persetujuan-kepala-lppm').text(`Surat penugasan sudah disetujui oleh ketua LPPM ${timeAgo(surat_penugasan[0].persetujuan_at)}`);
+          $('#penomoran-surat').text(`Penomoran sedang proses silahkan menunggu`);
+          if(surat_penugasan[0].nomor_surat!=null)
+            $('#penomoran-surat').text(`Nomor surat penugasan telah terbit ${timeAgo(surat_penugasan[0].updated_at)} dengan nomor ${surat_penugasan[0].nomor_surat} pada tanggal ${surat_penugasan[0].tanggal_surat}`);
+        }else{
+          $('#persetujuan-kepala-lppm').text(`Maaf, surat penugasan ditolak oleh Ketua LPPM ${timeAgo(surat_penugasan[0].persetujuan_at)} dengan catatan "${surat_penugasan[0].catatan}"`);
+        }
+      }
+
       let label_verifikasi="...";
       if(response.is_valid==null){
         label_verifikasi="Lengkapi seluruh dokumen syarat wajib dan Kirim Dokumen agar dapat diverifikasi";

@@ -18,6 +18,7 @@ Route::get('/dokumen-penelitian', [WebController::class, 'dokumenPenelitian'])->
 
 //untuk admin dan jfu lppm
 Route::get('/verifikasi', [WebController::class, 'verifikasi'])->name('verifikasi');
+Route::get('/pengelola-surat-penugasan', [WebController::class, 'pengelolaSuratPenugasan'])->name('pengelola-surat-penugasan');
 
 
 //untuk dosen

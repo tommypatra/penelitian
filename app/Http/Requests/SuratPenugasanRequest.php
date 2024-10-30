@@ -26,13 +26,15 @@ class SuratPenugasanRequest extends FormRequest
     {
         $id = $this->route('surat_penugasan');
         return [
-            'nomor_surat' => [
-                'required',
-                'max:255',
-                'string',
-                Rule::unique('surat_penugasans', 'nomor_surat')->ignore($id), // Abaikan record dengan ID ini saat update
-            ],
+            // 'nomor_surat' => [
+            //     'required',
+            //     'max:255',
+            //     'string',
+            //     Rule::unique('surat_penugasans', 'nomor_surat')->ignore($id), // Abaikan record dengan ID ini saat update
+            // ],
+            'nomor_surat' => 'nullable|string',
             'user_role_id' => 'required|exists:user_roles,id',
+            // 'is_diajukan' => 'required|boolean',
             'peneliti_id' => [
                 'required',
                 'exists:penelitis,id',

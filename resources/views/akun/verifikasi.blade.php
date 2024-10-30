@@ -148,6 +148,7 @@
                             <div class="form-group">
                               <label for="catatan">Catatan Verifikasi</label>
                               <textarea rows="3" class="form-control" id="catatan" name="catatan" placeholder="catatan verifikator" ></textarea>
+                              <div id="modal-catatan-lama" style="font-style:italic"></div>
                               <button type="submit" class="btn btn-primary mt-3"><i class="far fa-save"></i> Simpan</button>
                             </div>
                           </form>
@@ -302,6 +303,8 @@
         $('#modal-nama').text(user.name);
         $('#modal-email').text(user.email);
         $('#modal-nidn').text(peneliti.nidn);
+        $('#modal-catatan-lama').text(labelWeb(response.data.catatan));
+        
         $('#modal-foto').attr('href',base_url+'/'+peneliti.foto);
         $('#modal-judul-penelitian').text(response.data.judul);
         $('#modal-waktu-update').text(timeAgo(response.data.updated_at));
