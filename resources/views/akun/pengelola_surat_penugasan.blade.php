@@ -222,6 +222,10 @@
 
                 if(dt.catatan)
                   persetujuan+=`<div>${dt.catatan}</div>`;
+
+                const menu_ketua_lppm=(role_akses=='Ketua')?`<li><a class="dropdown-item btn-persetujuan" data-id="${dt.id}" href="javascript:;"><i class="fas fa-check-double"></i> Persetujuan Ketua LPPM</a></li>`:"";  
+                const menu_cetak=(dt.is_disetujui)?`<li><a class="dropdown-item btn-cetak" href="${base_url}/cetak-surat-penugasan/${dt.id}" target="_blank"><i class="fas fa-print"></i> Cetak Surat Persertujuan</a></li>`:"";  
+                const menu_pengelola=(role_akses=='JFU')?`<li><a class="dropdown-item btn-penomoran" data-id="${dt.id}" data-tanggal_surat="${dt.tanggal_surat}" data-nomor_surat="${dt.nomor_surat}"href="javascript:;"><i class="far fa-file-alt"></i> Penomoran Surat</a></li>`:"";  
                 
                 const row = `<tr>
                             <td>${no++}</td>
@@ -254,8 +258,9 @@
                                 <div class="dropdown">
                                     <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"></button>
                                     <ul class="dropdown-menu">
-                                        <li><a class="dropdown-item btn-persetujuan" data-id="${dt.id}" href="javascript:;"><i class="fas fa-check-double"></i> Persetujuan Ketua LPPM</a></li>
-                                        <li><a class="dropdown-item btn-penomoran" data-id="${dt.id}" data-tanggal_surat="${dt.tanggal_surat}" data-nomor_surat="${dt.nomor_surat}"href="javascript:;"><i class="far fa-file-alt"></i> Penomoran Surat</a></li>
+                                        ${menu_cetak}
+                                        ${menu_ketua_lppm}
+                                        ${menu_pengelola}                                        
                                         <li><a class="dropdown-item btn-detail" data-id="${dt.id}" href="javascript:;"><i class="fas fa-info-circle"></i> Detail</a></li>
                                     </ul>
                                 </div>

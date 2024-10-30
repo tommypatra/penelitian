@@ -7,7 +7,11 @@
         width: auto;
         min-width: 175px; /* Tetap tetapkan batas minimal */      
       }
-  </style>
+      a {
+        z-index: 10; /* Pastikan link di atas elemen lainnya */
+        position: relative; /* Pastikan link tidak tertutup */
+      }  
+</style>
 @endsection
 
 @section('container')
@@ -226,6 +230,7 @@
                 const ul_file = $('<ul class="file-upload" style="list-style-type: none; padding-left: 0;"></ul>');
                 if(dt.dokumen_peneliti.length>0){
                   $.each(dt.dokumen_peneliti, function(index_file, dt_file) {
+                    const link =`${base_url}/storage/${dt_file.path}`;
                     const li_file = $(`<li class="daftar-file">
                                           <span class="badge bg-success">                                             
                                             ${dt.nama}-${index_file+1}
@@ -270,8 +275,10 @@
         }else if(surat_penugasan[0].is_disetujui){
           $('#persetujuan-kepala-lppm').text(`Surat penugasan sudah disetujui oleh ketua LPPM ${timeAgo(surat_penugasan[0].persetujuan_at)}`);
           $('#penomoran-surat').text(`Penomoran sedang proses silahkan menunggu`);
-          if(surat_penugasan[0].nomor_surat!=null)
+          if(surat_penugasan[0].nomor_surat!=null){
             $('#penomoran-surat').text(`Nomor surat penugasan telah terbit ${timeAgo(surat_penugasan[0].updated_at)} dengan nomor ${surat_penugasan[0].nomor_surat} pada tanggal ${surat_penugasan[0].tanggal_surat}`);
+            $('#download-surat').html(`Surat penugasan ${timeAgo(surat_penugasan[0].updated_at)} sudah dapat <a href="${base_url}/cetak-surat-penugasan/${surat_penugasan[0].id}" target="_blank">di download disini</a> `);            
+          }
         }else{
           $('#persetujuan-kepala-lppm').text(`Maaf, surat penugasan ditolak oleh Ketua LPPM ${timeAgo(surat_penugasan[0].persetujuan_at)} dengan catatan "${surat_penugasan[0].catatan}"`);
         }

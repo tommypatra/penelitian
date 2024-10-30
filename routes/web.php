@@ -24,3 +24,4 @@ Route::get('/pengelola-surat-penugasan', [WebController::class, 'pengelolaSuratP
 //untuk dosen
 Route::get('/daftar-penelitian', [WebController::class, 'daftarPenelitian'])->name('daftar-penelitian');
 Route::get('/timeline-penelitan/{peneliti_id}', [WebController::class, 'timelinePenelitan'])->name('timeline-penelitian');
+Route::get('/dosen-surat-penugasan', [WebController::class, 'dosenSuratPenugasan'])->name('dosen-surat-penugasan');

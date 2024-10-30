@@ -181,17 +181,17 @@
                 </li>
 
                 <li class="nav-item">
-                  <a href="javascript:;">
-                    <i class="fab fa-readme"></i>
-                    <p>Penelitian</p>
+                  <a href="{{ route('verifikasi') }}">
+                    <i class="fas fa-user-shield"></i>
+                    <p>Verifikasi</p>
                   </a>
-                </li>              
+                </li>
                 <li class="nav-item">
-                  <a href="javascript:;">
+                  <a href="{{ route('pengelola-surat-penugasan') }}">
                     <i class="far fa-file-alt"></i>
                     <p>Surat Penugasan</p>
                   </a>
-                </li>              
+                </li>
               </ul>
 
               <ul class="nav nav-secondary" id="menu-ketua" style="display: none">
@@ -202,12 +202,12 @@
                   <h4 class="text-section">Ketua LPPM</h4>
                 </li>
 
-                <li class="nav-item">
+                {{-- <li class="nav-item">
                   <a href="javascript:;">
                     <i class="fab fa-readme"></i>
                     <p>Penelitian</p>
                   </a>
-                </li>              
+                </li>               --}}
                 <li class="nav-item">
                   <a href="{{ route('pengelola-surat-penugasan') }}">
                     <i class="far fa-file-alt"></i>
@@ -229,7 +229,7 @@
                   </a>
                 </li>              
                 <li class="nav-item">
-                  <a href="javascript:;">
+                  <a href="{{ route('dosen-surat-penugasan') }}">
                     <i class="far fa-file-alt"></i>
                     <p>Surat Penugasan</p>
                   </a>

@@ -55,6 +55,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('verifikasi-peneliti/{id}', [PenelitiController::class, 'verifikasiPeneliti']);
 
     //untuk verifikasi
+    Route::get('surat-tugas-dosen', [SuratPenugasanController::class, 'suratTugasDosen']);
     Route::get('daftar-peneliti/{id}', [VerifikasiController::class, 'index']);
     Route::get('data-peneliti/{id}', [VerifikasiController::class, 'show']);
     Route::put('simpan-verifikasi-peneliti/{id}', [VerifikasiController::class, 'simpanVerifikasiPeneliti']);

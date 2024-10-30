@@ -121,4 +121,9 @@ class WebController extends Controller
     {
         return view('akun.pengelola_surat_penugasan');
     }
+
+    public function dosenSuratPenugasan()
+    {
+        return view('akun.dosen_surat_penugasan');
+    }
 }

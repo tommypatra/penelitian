@@ -222,6 +222,7 @@ class DatabaseSeeder extends Seeder
         //peneliti
         $dtdef = [
             ['penelitian_id' => 1, 'user_role_id' => 4, 'judul' => 'Teknik Menggunakan AI dengan Bijak'],
+            ['penelitian_id' => 2, 'user_role_id' => 4, 'judul' => 'Membuat komponen mobil dengan baik dan benar'],
             ['penelitian_id' => 1, 'user_role_id' => 7, 'judul' => 'Pengaruh Bahasa Pada Kondisi Psikologi'],
             ['penelitian_id' => 2, 'user_role_id' => 7, 'judul' => 'Bahasa Daerah Mulai Terancam Punah'],
         ];

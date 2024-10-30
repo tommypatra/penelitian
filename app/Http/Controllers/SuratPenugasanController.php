@@ -19,7 +19,7 @@ class SuratPenugasanController extends Controller
      */
     public function index(Request $request)
     {
-        $dataQuery = SuratPenugasan::with(['peneliti.userRole.user.identitas', 'peneliti.penelitian', 'userRole.user'])->orderBy('is_disetujui', 'desc')->orderBy('tanggal_surat', 'desc');
+        $dataQuery = SuratPenugasan::with(['peneliti.userRole.user.identitas', 'peneliti.penelitian', 'userRole.user', 'ketuaLppmRole.user'])->orderBy('is_disetujui', 'desc')->orderBy('tanggal_surat', 'desc');
 
         //untuk dapat role id admin atau jfu yang sedang login
         // $daftar_role = daftarAkses(auth()->user()->id);
@@ -45,6 +45,50 @@ class SuratPenugasanController extends Controller
                         $subQuery->where('is_disetujui', true)->where('nomor_surat', '!=', "");
                     });
         }
+
+        // Filter berdasarkan pencarian
+        if ($request->filled('search')) {
+            $dataQuery->where(function ($query) use ($request) {
+                $query->whereHas('user', function ($userQuery) use ($request) {
+                    $userQuery->where('name', 'like', '%' . $request->search . '%');
+                })
+                    ->orWhereHas('role', function ($roleQuery) use ($request) {
+                        $roleQuery->where('nama', 'like', '%' . $request->search . '%');
+                    });
+            });
+        }
+
+        $default_limit = env('DEFAULT_LIMIT', 30);
+        $limit = $request->filled('limit') ? $request->limit : $default_limit;
+        $data = $dataQuery->paginate($limit);
+        $resourceCollection = $data->getCollection()->map(function ($item) {
+            return new SuratPenugasanResource($item);
+        });
+        $data->setCollection($resourceCollection);
+
+        $dataRespon = [
+            'status' => true,
+            'message' => 'Pengambilan data dilakukan',
+            'data' => $data,
+        ];
+        return response()->json($dataRespon);
+    }
+
+    public function suratTugasDosen(Request $request)
+    {
+        $dataQuery = SuratPenugasan::with(['peneliti.userRole.user.identitas', 'peneliti.penelitian', 'userRole.user', 'ketuaLppmRole.user'])->orderBy('is_disetujui', 'desc')->orderBy('tanggal_surat', 'desc');
+
+        $daftar_role = daftarAkses(auth()->user()->id);
+        $is_dosen = cekRole($daftar_role, "Dosen");
+        if (!$is_dosen) {
+            return response()->json(['status' => false, 'message' => 'Akses ditolak'], 403);
+        }
+        $dataQuery->where('is_disetujui', true)
+            ->where(function ($query) use ($is_dosen) {
+                $query->whereHas('peneliti', function ($userQuery) use ($is_dosen) {
+                    $userQuery->where('user_role_id', $is_dosen);
+                });
+            });
 
         // Filter berdasarkan pencarian
         if ($request->filled('search')) {
