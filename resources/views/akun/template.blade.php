@@ -504,7 +504,9 @@
       var role_akses = localStorage.getItem('role_akses');
       var user_role_id = localStorage.getItem('user_role_id');
       var user_email = localStorage.getItem('user_email');
-      var user_foto = base_url+'/'+localStorage.getItem('user_foto');
+      var foto = localStorage.getItem('user_foto');
+
+      var user_foto = (foto!='images/user-avatar.png')?base_url+'/storage/'+foto:base_url+'/'+foto;
 
       function setAkses(vrole_akses) {
         ajaxRequest(base_url + '/api/cek-akses/' + vrole_akses, 'GET', null, false,

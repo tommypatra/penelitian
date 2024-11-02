@@ -314,7 +314,7 @@
       if (role_akses) {
         ajaxRequest(base_url + '/api/cek-akses/' + role_akses, 'GET', null, false,
           function(response) {
-            var goUrl = `{{ url('/dashboard') }}`;
+            var goUrl = base_url+'/dashboard';
             window.location.replace(goUrl);
           },
           function(jqXHR, textStatus, errorThrown) {
@@ -350,7 +350,7 @@
         $('#daftar-akses').html(htmlOptions);
         myModalAkses.show();
       }else{
-        var goUrl = url+'/dashboard';
+        var goUrl = base_url+'/dashboard';
         window.location.replace(goUrl);
       }
     }
