@@ -53,6 +53,6 @@ class User extends Authenticatable
 
     public function identitas()
     {
-        return $this->hasMany(Identitas::class);
+        return $this->hasOne(Identitas::class);
     }
 }

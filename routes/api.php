@@ -24,8 +24,8 @@ Route::get('daftar-pangkat', [PangkatController::class, 'index']);
 Route::get('daftar-jenis-penelitian', [JenisPenelitianController::class, 'index']);
 Route::get('daftar-jadwal-penelitian', [PenelitianController::class, 'index']);
 Route::get('daftar-role', [RoleController::class, 'index']);
-Route::post('simpan-pendaftaran', [UserController::class, 'create']);
-
+Route::post('simpan-pendaftaran', [UserController::class, 'store']);
+Route::get('cek-qrcode/{id}', [SuratPenugasanController::class, 'show']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('cek-akses/{grup}', [WebController::class, 'cekAkses']);
@@ -36,6 +36,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::resource('unit-kerja', UnitKerjaController::class);
     Route::resource('pangkat', PangkatController::class);
     Route::resource('user', UserController::class);
+    Route::get('data-profil', [UserController::class, 'dataProfil']);
     Route::resource('jenis-penelitian', JenisPenelitianController::class);
     Route::resource('role', RoleController::class);
     Route::resource('penelitian', PenelitianController::class);

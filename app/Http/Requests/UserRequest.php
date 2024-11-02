@@ -44,6 +44,7 @@ class UserRequest extends FormRequest
             'foto' => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
             'nip' => 'nullable|string',
             'nidn' => 'nullable|string',
+            'jabatan' => 'nullable|string',
             'unit_kerja_id' => 'required|exists:unit_kerjas,id',
             'pangkat_id' => 'required|exists:pangkats,id',
         ];
@@ -68,6 +69,7 @@ class UserRequest extends FormRequest
             'gelar_depan' => 'gelar depan',
             'gelar_belakang' => 'gelar belakang',
             'jenis_kelamin' => 'jenis kelamin',
+            'jabatan' => 'jabatan',
             'no_hp' => 'nomor HP/WA',
             'foto' => 'foto',
             'nip' => 'nomor input pegawai (NIP)',

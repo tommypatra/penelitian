@@ -61,7 +61,7 @@
                       <th>No</th>
                       <th>Nama/ Jenis Kelamin/ Email/ HP</th>
                       <th>NIP/NIDN</th>
-                      <th>Gol/ Pangkat</th>
+                      <th>Gol/ Pangkat/ Jabatan</th>
                       <th>Unit Kerja</th>
                       <th>Aksi</th>
                     </tr>
@@ -88,6 +88,7 @@
 
 
 @section('modal')
+
 <div class="modal fade" id="modalForm"  aria-labelledby="modalFormLabel" aria-hidden="true">
   <div class="modal-dialog modal-xl">
       <div class="modal-content">
@@ -182,6 +183,13 @@
                 </div>
 
                 <div class="row">
+                  <div class="col-lg-12">
+                    <div class="form-group">
+                      <label for="jabatan">Jabatan</label><br>
+                      <input type="text" class="form-control" id="jabatan" name="jabatan" placeholder="jabatan">
+                    </div>
+                  </div>
+
                   <div class="col-lg-12">                  
                     <div class="form-group">
                       <label for="foto">Foto Profil</label>
@@ -209,7 +217,7 @@
               </div>
 
               <div class="modal-footer">
-                  <button type="submit" class="btn btn-primary"><i class="bi bi-floppy"></i> Simpan</button>
+                  <button type="submit" class="btn btn-primary"><i class="far fa-save"></i> Simpan</button>
                   <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bi bi-x-lg"></i> Tutup</button>
               </div>
           </form>
@@ -263,7 +271,6 @@
 
   $(document).ready(function() {
 
-    dataLoad();
     dataUnitKerja();
     function dataUnitKerja() {
       var url = base_url + '/api/unit-kerja?page=1&limit=1000';
@@ -282,6 +289,7 @@
       },false);
     }
 
+    dataLoad();
     //untuk render dari database
     function renderData(response) {
         const dataList = $('#data-list');
@@ -294,11 +302,11 @@
             $.each(data, function(index, dt) {
                 const parent = dt.parent!=null?dt.parent.nama:"";
                 const pilihan = dt.is_pilihan?"YA":"TIDAK";
-                const pangkat_gol = (dt.identitas[0].pangkat_id)?dt.identitas[0].pangkat.gol+' ('+dt.identitas[0].pangkat.nama+')':"";
-                const unit_kerja = (dt.identitas[0].unit_kerja_id)?dt.identitas[0].unit_kerja.nama:"";
-                const nip = (dt.identitas[0].nip)?'NIP. '+dt.identitas[0].nip:"";
-                const nidn = (dt.identitas[0].nidn)?'NIDN. '+dt.identitas[0].nidn:"";
-                const tmpfoto=(dt.identitas[0].foto!='images/user-avatar.png')? base_url+'/storage/'+dt.identitas[0].foto:base_url+'/'+dt.identitas[0].foto;
+                const pangkat_gol = (dt.identitas.pangkat_id)?dt.identitas.pangkat.gol+' ('+dt.identitas.pangkat.nama+')':"";
+                const unit_kerja = (dt.identitas.unit_kerja_id)?dt.identitas.unit_kerja.nama:"";
+                const nip = (dt.identitas.nip)?'NIP. '+dt.identitas.nip:"";
+                const nidn = (dt.identitas.nidn)?'NIDN. '+dt.identitas.nidn:"";
+                const tmpfoto=(dt.identitas.foto!='images/user-avatar.png')? base_url+'/storage/'+dt.identitas.foto:base_url+'/'+dt.identitas.foto;
 
                 var user_role=`<span class="badge badge-danger">Tidak Ada Role</span>`;
 
@@ -315,12 +323,12 @@
                             <td>
                               <div div style="display: flex; align-items: center;">
                                 <img src="${tmpfoto}" height="75px" style="margin-right: 10px; border-radius: 50%;">
-                                ${dt.name} (${dt.identitas[0].jenis_kelamin}) / ${dt.email}
-                                HP. ${dt.identitas[0].no_hp}
+                                ${dt.name} (${dt.identitas.jenis_kelamin}) / ${dt.email}
+                                HP. ${dt.identitas.no_hp}
                               </div>
                             </td>
                             <td>${nip+' '+nidn}</td>
-                            <td>${pangkat_gol}</td>
+                            <td>${pangkat_gol} <div>${labelWeb(dt.identitas.jabatan)}</div></td>
                             <td>${unit_kerja} ${user_role}</td>
                             <td>
                                 <div class="dropdown">
@@ -434,23 +442,24 @@
     $(document).on('click', '.btn-ganti', function() {
       const id = $(this).data('id');
       showDataById(endpoint, id, function(response) {
-        const tmpfoto=(response.data.identitas[0].foto!='images/user-avatar.png')? base_url+'/storage/'+response.data.identitas[0].foto:base_url+'/'+response.data.identitas[0].foto;
+        const tmpfoto=(response.data.identitas.foto!='images/user-avatar.png')? base_url+'/storage/'+response.data.identitas.foto:base_url+'/'+response.data.identitas.foto;
 
         $('#id').val(response.data.id);
         $('#name').val(response.data.name);
         $('#email').val(response.data.email);
         
-        $('#gelar_depan').val(response.data.identitas[0].gelar_depan);
-        $('#gelar_belakang').val(response.data.identitas[0].gelar_belakang);
-        $('#no_hp').val(response.data.identitas[0].no_hp);
-        $('#nip').val(response.data.identitas[0].nip);
-        $('#nidn').val(response.data.identitas[0].nidn);
+        $('#gelar_depan').val(response.data.identitas.gelar_depan);
+        $('#gelar_belakang').val(response.data.identitas.gelar_belakang);
+        $('#no_hp').val(response.data.identitas.no_hp);
+        $('#nip').val(response.data.identitas.nip);
+        $('#nidn').val(response.data.identitas.nidn);
+        $('#jabatan').val(response.data.identitas.jabatan);
 
         $('#display_foto').html(`<img src="${tmpfoto}" height="75px">`);
 
-        $('#pangkat_id').val(response.data.identitas[0].pangkat_id).trigger('change');            
-        $('#unit_kerja_id').val(response.data.identitas[0].unit_kerja_id).trigger('change');            
-        $('#jenis_kelamin').val(response.data.identitas[0].jenis_kelamin).trigger('change');            
+        $('#pangkat_id').val(response.data.identitas.pangkat_id).trigger('change');            
+        $('#unit_kerja_id').val(response.data.identitas.unit_kerja_id).trigger('change');            
+        $('#jenis_kelamin').val(response.data.identitas.jenis_kelamin).trigger('change');            
         showModal('modalForm');
       });
     });

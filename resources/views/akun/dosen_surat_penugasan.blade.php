@@ -113,11 +113,11 @@
                 const penelitian = peneliti.penelitian;
                 const ketua_lppm = dt.ketua_lppm_role.user;
                 const user = dt.peneliti.user_role.user;
-                const identitas = user.identitas[0];
+                const identitas = user.identitas;
                 const qr_id = `qr-code-${index}`;
-                const qr_content = `disetujui ${ketua_lppm.name} untuk ${user.name}; ${dt.nomor_surat}`;
                 const qr_id_link = `qr-code-link-${index}`;
-                const qr_content_link = `${base_url}/cek-qrcode/${dt.id}`;
+                const qr_link = `${base_url}/cek-qrcode/${dt.id}`;
+                const qr_ttd = `eSing ${ketua_lppm.name} for ${dt.nomor_surat} ${qr_link}`;
 
                 const row = `<tr>
                             <td>${no++}</td>
@@ -138,14 +138,14 @@
 
                 // Buat QR code menggunakan QRCode.js
                 new QRCode(document.getElementById(qr_id), {
-                    text: qr_content,
+                    text: qr_ttd,
                     width: 75,
                     height: 75
                 });                
 
                 // Buat QR code menggunakan QRCode.js
                 new QRCode(document.getElementById(qr_id_link), {
-                    text: qr_content_link,
+                    text: qr_link,
                     width: 75,
                     height: 75
                 });                

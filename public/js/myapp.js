@@ -11,6 +11,20 @@ function formatTanggal(tanggal) {
     return `${tahun}-${bulan}-${hari} ${jam}:${menit}:${detik}`;
 }
 
+function labelTanggal(tanggal) {
+    // Array nama bulan dalam Bahasa Indonesia
+    const bulan = [
+        "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+        "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+    ];
+
+    const [tahun, bulanIndex, hari] = tanggal.split("-");
+
+    const namaBulan = bulan[parseInt(bulanIndex, 10) - 1];
+
+    return `${parseInt(hari, 10)} ${namaBulan} ${tahun}`;
+}
+
 function forceLogout(){
     localStorage.removeItem('access_token');
     localStorage.removeItem('daftar_akses');

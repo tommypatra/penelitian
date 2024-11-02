@@ -126,4 +126,24 @@ class WebController extends Controller
     {
         return view('akun.dosen_surat_penugasan');
     }
+
+    public function cetakSuratPenugasan($id)
+    {
+        return view('akun.cetak_surat_penugasan', ['id' => $id]);
+    }
+
+    public function cekQrcode($id)
+    {
+        return view('cek_qrcode', ['id' => $id]);
+    }
+
+    public function profil()
+    {
+        return view('akun.profil');
+    }
+
+    public function pendaftaran()
+    {
+        return view('pendaftaran');
+    }
 }

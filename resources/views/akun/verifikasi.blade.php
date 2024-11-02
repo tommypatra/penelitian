@@ -193,7 +193,7 @@
         pagination.empty();
         if (data.length > 0) {
             $.each(data, function(index, dt) {
-                const identitas = dt.user_role.user.identitas[0];
+                const identitas = dt.user_role.user.identitas;
                 const foto = base_url+'/'+identitas.foto;
                 const row = `<tr>
                             <td>${no++}</td>
@@ -292,7 +292,7 @@
       const id = $(this).data('id');
       showDataById(endpoint, id, function(response) {
         formReset();
-        const peneliti=response.data.user_role.user.identitas[0];
+        const peneliti=response.data.user_role.user.identitas;
         const penelitian=response.data.penelitian;
         const user=response.data.user_role.user;
         const dokumen=response.data.penelitian.dokumen;

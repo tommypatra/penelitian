@@ -2,7 +2,6 @@
 <html lang="en">
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>Peneltian - IAIN Kendari</title>
     <meta
       content="width=device-width, initial-scale=1.0, shrink-to-fit=no"
       name="viewport"
@@ -409,13 +408,13 @@
                           <div class="u-text">
                             <h4 class="user-name">Akun</h4>
                             <p class="text-muted user-email">akun@iainkendari.ac.id</p>
-                            <span class="role-akses">COBA</span>
+                            <span class="role-akses">Role</span>
                           </div>
                         </div>
                       </li>
                       <li>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#">My Profile</a>
+                        <a class="dropdown-item" href="{{ route('profil') }}">My Profile</a>
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item logout" href="javascript:;">Keluar/ Logout</a>
                       </li>
@@ -497,6 +496,7 @@
     <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
     <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/additional-methods.min.js"></script>
     <script src="{{ asset('plugins/toastr/build/toastr.min.js') }}"></script>
+
     <script src="{{ asset('js/token.js') }}"></script>
     <script src="{{ asset('js/myapp.js') }}"></script>
     <script>

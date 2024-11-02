@@ -161,10 +161,10 @@ class DatabaseSeeder extends Seeder
 
         //identitas user
         $dtdef = [
-            ['user_id' => 1, 'gelar_depan' => null, 'gelar_belakang' => null, 'jenis_kelamin' => 'L', 'no_hp' => '0852091720987', 'foto' => null, 'nidn' => '0091876309', 'nip' => '198510212009011008', 'unit_kerja_id' => 1, 'pangkat_id' => null],
-            ['user_id' => 2, 'gelar_depan' => 'Dr', 'gelar_belakang' => 'M.Pd', 'jenis_kelamin' => 'L', 'no_hp' => '085201987632', 'foto' => null, 'nidn' => '7164538290', 'nip' => '196810212001011001', 'unit_kerja_id' => 6, 'pangkat_id' => 9],
-            ['user_id' => 3, 'gelar_depan' => null, 'gelar_belakang' => 'SH', 'jenis_kelamin' => 'L', 'no_hp' => '085231245455', 'foto' => null, 'nidn' => '0098667810', 'nip' => '197810212004011002', 'unit_kerja_id' => 6, 'pangkat_id' => 6],
-            ['user_id' => 4, 'gelar_depan' => 'Dr', 'gelar_belakang' => 'S.Si., M.Hum', 'jenis_kelamin' => 'L', 'no_hp' => '085342537654', 'foto' => null, 'nidn' => '0098090098', 'nip' => '198210212005011007', 'unit_kerja_id' => 14, 'pangkat_id' => 7],
+            ['user_id' => 1, 'jabatan' => null, 'gelar_depan' => null, 'gelar_belakang' => null, 'jenis_kelamin' => 'L', 'no_hp' => '0852091720987', 'foto' => null, 'nidn' => '0091876309', 'nip' => '198510212009011008', 'unit_kerja_id' => 1, 'pangkat_id' => null],
+            ['user_id' => 2, 'jabatan' => 'Lektor Kepala/ Ketua LPPM', 'gelar_depan' => 'Dr', 'gelar_belakang' => 'M.Pd', 'jenis_kelamin' => 'L', 'no_hp' => '085201987632', 'foto' => null, 'nidn' => '7164538290', 'nip' => '196810212001011001', 'unit_kerja_id' => 6, 'pangkat_id' => 9],
+            ['user_id' => 3, 'jabatan' => null, 'gelar_depan' => null, 'gelar_belakang' => 'SH', 'jenis_kelamin' => 'L', 'no_hp' => '085231245455', 'foto' => null, 'nidn' => '0098667810', 'nip' => '197810212004011002', 'unit_kerja_id' => 6, 'pangkat_id' => 6],
+            ['user_id' => 4, 'jabatan' => 'Lektor Kepala/ Kapus Pengabdian', 'gelar_depan' => 'Dr', 'gelar_belakang' => 'S.Si., M.Hum', 'jenis_kelamin' => 'L', 'no_hp' => '085342537654', 'foto' => null, 'nidn' => '0098090098', 'nip' => '198210212005011007', 'unit_kerja_id' => 14, 'pangkat_id' => 7],
         ];
 
         foreach ($dtdef as $dt) {
@@ -174,6 +174,7 @@ class DatabaseSeeder extends Seeder
                 'gelar_belakang' => $dt['gelar_belakang'],
                 'jenis_kelamin' => $dt['jenis_kelamin'],
                 'no_hp' => $dt['no_hp'],
+                'jabatan' => $dt['jabatan'],
                 'nidn' => $dt['nidn'],
                 'nip' => $dt['nip'],
                 'unit_kerja_id' => $dt['unit_kerja_id'],

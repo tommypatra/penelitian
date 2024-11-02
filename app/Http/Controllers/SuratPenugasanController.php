@@ -156,7 +156,8 @@ class SuratPenugasanController extends Controller
             //     return response()->json(['status' => false, 'message' => 'Akses ditolak'], 403);
             // }
 
-            $data = SuratPenugasan::with(['peneliti.penelitian', 'userRole.user'])->where('id', $id)->firstOrFail();
+            $data = SuratPenugasan::with(['peneliti.userRole.user.identitas.pangkat', 'peneliti.userRole.user.identitas.unitKerja', 'peneliti.penelitian', 'userRole.user.identitas', 'ketuaLppmRole.user.identitas.pangkat', 'ketuaLppmRole.user.identitas.unitKerja'])
+                ->where('id', $id)->firstOrFail();
 
             return response()->json([
                 'status' => true,

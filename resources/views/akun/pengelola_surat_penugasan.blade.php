@@ -192,7 +192,7 @@
 <script>
   const endpoint = base_url+'/api/surat-penugasan';
   var page = 1;
-  var template_nomor = `{{ ".../In.23/L.I/TL.00/" . date('m') . "/" . date('Y') }}`;
+  var template_nomor = `{{ ".../In.23/L.I/TL.03/" . date('m') . "/" . date('Y') }}`;
 
   $(document).ready(function() {
     $('#contoh-template-surat').text(template_nomor);
@@ -210,7 +210,7 @@
                 const peneliti = dt.peneliti;
                 const penelitian = dt.peneliti.penelitian;
                 const user = dt.peneliti.user_role.user;
-                const identitas = dt.peneliti.user_role.user.identitas[0];
+                const identitas = dt.peneliti.user_role.user.identitas;
                 const foto = base_url+'/'+identitas.foto;
                 var persetujuan = "";
                 if(dt.is_disetujui==null)

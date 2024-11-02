@@ -142,8 +142,9 @@
             </div>
             <div class="timeline-body">
               <p id="output-penelitian">
-                Setelah penelitian selesai dilakukan, mohon upload output sebagai berikut.
+                Setelah surat pengasan terbit dan penelitian selesai dilakukan, mohon upload output pada web ini.
               </p>
+              <div id="syarat-upload"></div>
             </div>
           </div>
         </li>
@@ -306,6 +307,7 @@
         $('#btn-kirim-dokumen').remove();
         $('#btn-ganti-judul').remove();
         $('#judul').prop('disabled', true);
+        renderDokumen(response.penelitian.dokumen,'#syarat-upload','output',false);
       }
       renderDokumen(response.penelitian.dokumen,'#dokumen-upload','syarat',response.is_valid);
     }    

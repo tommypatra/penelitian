@@ -25,3 +25,10 @@ Route::get('/pengelola-surat-penugasan', [WebController::class, 'pengelolaSuratP
 Route::get('/daftar-penelitian', [WebController::class, 'daftarPenelitian'])->name('daftar-penelitian');
 Route::get('/timeline-penelitan/{peneliti_id}', [WebController::class, 'timelinePenelitan'])->name('timeline-penelitian');
 Route::get('/dosen-surat-penugasan', [WebController::class, 'dosenSuratPenugasan'])->name('dosen-surat-penugasan');
+
+//untuk umum
+Route::get('/cetak-surat-penugasan/{id}', [WebController::class, 'cetakSuratPenugasan'])->name('cetak-surat-penugasan');
+Route::get('/cek-qrcode/{id}', [WebController::class, 'cekQrcode'])->name('cek-qrcode');
+
+Route::get('/profil', [WebController::class, 'profil'])->name('profil');
+Route::get('/pendaftaran', [WebController::class, 'pendaftaran'])->name('pendaftaran');

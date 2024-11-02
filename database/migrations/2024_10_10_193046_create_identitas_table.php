@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('no_hp')->nullable();
             $table->string('foto')->default('images/user-avatar.png');
             $table->string('nip')->nullable();
+            $table->string('jabatan')->nullable();
             $table->string('nidn')->nullable();
 
             $table->foreignId('user_id');

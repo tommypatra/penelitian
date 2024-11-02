@@ -68,6 +68,7 @@ class UserController extends Controller
                 'user_id' => $data['user']->id,
                 'unit_kerja_id' => $validated['unit_kerja_id'],
                 'pangkat_id' => $validated['pangkat_id'],
+                'jabatan' => $validated['jabatan'],
                 'foto' => $fotoPath,
                 'gelar_depan' => isset($validated['gelar_depan']) ? $validated['gelar_depan'] : null,
                 'gelar_belakang' => isset($validated['gelar_belakang']) ? $validated['gelar_belakang'] : null,
@@ -94,6 +95,11 @@ class UserController extends Controller
             DB::rollBack();
             return response()->json(['status' => false, 'message' => 'terjadi kesalahan saat membuat data baru: ' . $e->getMessage()], 500);
         }
+    }
+
+    public function dataProfil()
+    {
+        return $this->show(auth()->user()->id);
     }
 
     /**
@@ -151,6 +157,7 @@ class UserController extends Controller
                 'unit_kerja_id' => $validated['unit_kerja_id'],
                 'pangkat_id' => $validated['pangkat_id'],
                 'foto' => $fotoPath,
+                'jabatan' => $validated['jabatan'],
                 'gelar_depan' => isset($validated['gelar_depan']) ? $validated['gelar_depan'] : null,
                 'gelar_belakang' => isset($validated['gelar_belakang']) ? $validated['gelar_belakang'] : null,
                 'jenis_kelamin' => $validated['jenis_kelamin'],
