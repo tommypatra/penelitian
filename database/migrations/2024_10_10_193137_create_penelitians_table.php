@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('penelitians', function (Blueprint $table) {
             $table->id();
-            $table->string('nama');
+            $table->string('nama', 150);
             $table->year('tahun');
             $table->date('daftar_mulai')->nullable();
             $table->date('daftar_selesai')->nullable();

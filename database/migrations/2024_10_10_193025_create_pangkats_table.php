@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('pangkats', function (Blueprint $table) {
             $table->id();
-            $table->string('gol');
-            $table->string('nama');
+            $table->string('gol', 150);
+            $table->string('nama', 150);
             $table->smallInteger('urut')->nullable();
             $table->unique(['gol']);
             $table->unique(['nama']);

@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('dokumens', function (Blueprint $table) {
             $table->id();
-            $table->string('nama');
-            $table->string('keterangan')->nullable();
+            $table->string('nama', 150);
+            $table->string('keterangan', 150)->nullable();
             $table->enum('jenis', ['syarat', 'output']);
             $table->enum('tipe_file', ['gambar', 'pdf']);
             $table->boolean('is_wajib')->default(0);

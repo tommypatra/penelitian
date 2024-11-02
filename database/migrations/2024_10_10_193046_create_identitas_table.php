@@ -13,14 +13,14 @@ return new class extends Migration
     {
         Schema::create('identitas', function (Blueprint $table) {
             $table->id();
-            $table->string('gelar_depan')->nullable();
-            $table->string('gelar_belakang')->nullable();
+            $table->string('gelar_depan', 150)->nullable();
+            $table->string('gelar_belakang', 150)->nullable();
             $table->enum('jenis_kelamin', ['L', 'P'])->nullable();
-            $table->string('no_hp')->nullable();
-            $table->string('foto')->default('images/user-avatar.png');
-            $table->string('nip')->nullable();
-            $table->string('jabatan')->nullable();
-            $table->string('nidn')->nullable();
+            $table->string('no_hp', 150)->nullable();
+            $table->string('foto', 150)->default('images/user-avatar.png');
+            $table->string('nip', 150)->nullable();
+            $table->string('jabatan', 150)->nullable();
+            $table->string('nidn', 150)->nullable();
 
             $table->foreignId('user_id');
             $table->foreign('user_id')->references('id')->on('users')->restrictOnDelete();

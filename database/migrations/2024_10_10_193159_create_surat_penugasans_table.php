@@ -18,12 +18,12 @@ return new class extends Migration
             $table->foreignId('peneliti_id');
             $table->foreign('peneliti_id')->references('id')->on('penelitis')->restrictOnDelete();
             $table->date('tanggal_surat');
-            $table->string('nomor_surat')->nullable();
+            $table->string('nomor_surat', 150)->nullable();
 
             //untuk validasi berkas
             // $table->boolean('is_diajukan')->nullable();
             $table->boolean('is_disetujui')->nullable();
-            $table->string('catatan')->nullable();
+            $table->string('catatan', 150)->nullable();
             $table->foreignId('ketua_lppm_role_id')->nullable();
             $table->foreign('ketua_lppm_role_id')->references('id')->on('user_roles')->restrictOnDelete();
             // $table->unique(['nomor_surat']);

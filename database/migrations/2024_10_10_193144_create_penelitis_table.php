@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('penelitis', function (Blueprint $table) {
             $table->id();
-            $table->string('judul');
+            $table->string('judul', 150);
             $table->foreignId('user_role_id');
             $table->foreign('user_role_id')->references('id')->on('user_roles')->restrictOnDelete();
             $table->foreignId('penelitian_id');
@@ -22,7 +22,7 @@ return new class extends Migration
 
             //untuk validasi akhir peneliti
             $table->boolean('is_valid')->nullable();
-            $table->string('catatan')->nullable();
+            $table->string('catatan', 150)->nullable();
             $table->foreignId('admin_role_id')->nullable();
             $table->foreign('admin_role_id')->references('id')->on('user_roles')->restrictOnDelete();
 

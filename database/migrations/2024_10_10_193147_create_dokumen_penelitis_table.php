@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('dokumen_penelitis', function (Blueprint $table) {
             $table->id();
-            $table->string('path');
+            $table->string('path', 150);
             $table->foreignId('dokumen_id');
             $table->foreign('dokumen_id')->references('id')->on('dokumens')->restrictOnDelete();
             $table->foreignId('peneliti_id');
@@ -22,7 +22,7 @@ return new class extends Migration
 
             //untuk validasi berkas
             $table->boolean('is_valid')->nullable();
-            $table->string('catatan')->nullable();
+            $table->string('catatan', 150)->nullable();
             $table->foreignId('admin_role_id')->nullable();
             $table->foreign('admin_role_id')->references('id')->on('user_roles')->restrictOnDelete();
 

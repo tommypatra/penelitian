@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('unit_kerjas', function (Blueprint $table) {
             $table->id();
-            $table->string('nama');
-            $table->string('keterangan')->nullable();
+            $table->string('nama', 150);
+            $table->string('keterangan', 150)->nullable();
             $table->boolean('is_pilihan')->default(1);
             $table->foreignId('parent_id')->nullable();
             $table->foreign('parent_id')->references('id')->on('unit_kerjas')->restrictOnDelete();

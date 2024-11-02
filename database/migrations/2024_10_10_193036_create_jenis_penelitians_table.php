@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('jenis_penelitians', function (Blueprint $table) {
             $table->id();
-            $table->string('nama');
-            $table->string('keterangan')->nullable();
+            $table->string('nama', 150);
+            $table->string('keterangan', 150)->nullable();
             $table->unique(['nama']);
             $table->timestamps();
         });
