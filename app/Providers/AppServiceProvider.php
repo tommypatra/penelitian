@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -22,6 +24,6 @@ class AppServiceProvider extends ServiceProvider
         if (env('APP_ENV') == 'production')
             URL::forceScheme('https');
         //default string length
-        Schema::defaultStringLength(191);
+        Schema::defaultStringLength(180);
     }
 }
