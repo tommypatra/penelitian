@@ -13,6 +13,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Storage;
 
+use Illuminate\Support\Facades\Mail;
+use App\Mail\KirimEmail;
+
 class UserController extends Controller
 {
     /**
@@ -90,6 +93,19 @@ class UserController extends Controller
 
 
             DB::commit();
+
+            // Mengirim email setelah berhasil commit transaksi
+            Mail::to($data['user']->email)->queue(new KirimEmail(
+                'Selamat Datang di Aplikasi Permanen IAIN Kendari',
+                [
+                    'name' => $data['user']->name,
+                    'password' => $validated['password'],
+                    'email' => $data['user']->email
+                ],
+                'mail.pendaftaran_akun'
+            ));
+
+
             return response()->json(['status' => true, 'message' => 'data baru berhasil dibuat', 'data' => $data], 201);
         } catch (\Exception $e) {
             DB::rollBack();

@@ -211,7 +211,7 @@
 
     dataLoad();
 
-    function renderDokumen(dokumen,elementId,kategori,is_valid){
+    function renderDokumen(dokumen,dokumen_peneliti,elementId,kategori,is_valid){
       const ul = $('<ul class="dokumen"></ul>');
       $(elementId).empty();
       if (dokumen.length > 0) {
@@ -227,25 +227,27 @@
                     acceptType = 'image/*'; 
                 }
 
-                //untuk list file yang sudah di upload               
+                // untuk list file yang sudah di upload               
                 const ul_file = $('<ul class="file-upload" style="list-style-type: none; padding-left: 0;"></ul>');
-                if(dt.dokumen_peneliti.length>0){
-                  $.each(dt.dokumen_peneliti, function(index_file, dt_file) {
-                    const link =`${base_url}/storage/${dt_file.path}`;
-                    const li_file = $(`<li class="daftar-file">
-                                          <span class="badge bg-success">                                             
-                                            ${dt.nama}-${index_file+1}
-                                          </span>  
-                                          <span style="font-size:12px">${timeAgo(dt_file.created_at)}</span>
-                                          <a href="${base_url+'/storage/'+dt_file.path}" target="_blank"><i class="fas fa-file-download"></i></a>
-                                          ${is_valid ? '' : `<a href="javascript:;" data-id="${dt_file.id}" class="btn-hapus-download"><i class="fas fa-trash"></i></a>`}                                       
-                                        </li>`);
-                    ul_file.append(li_file);
+                if(dokumen_peneliti.length>0){
+                  $.each(dokumen_peneliti, function(index_file, dt_file) {
+                    if(dt_file.dokumen_id==dt.id){
+                      const link =`${base_url}/storage/${dt_file.path}`;
+                      const li_file = $(`<li class="daftar-file">
+                                            <span class="badge bg-success">                                             
+                                              ${dt.nama}-${index_file+1}
+                                            </span>  
+                                            <span style="font-size:12px">${timeAgo(dt_file.created_at)}</span>
+                                            <a href="${base_url+'/storage/'+dt_file.path}" target="_blank"><i class="fas fa-file-download"></i></a>
+                                            ${is_valid ? '' : `<a href="javascript:;" data-id="${dt_file.id}" class="btn-hapus-download"><i class="fas fa-trash"></i></a>`}                                       
+                                          </li>`);
+                      ul_file.append(li_file);
+                    }
                   });
                 } 
 
                 //membuat list untuk dokumen               
-                const li = $(`<li class="daftar-dokumen" data-is_wajib="${dt.is_wajib}" data-jumlah_dokumen_upload="${dt.dokumen_peneliti.length}">
+                const li = $(`<li class="daftar-dokumen" data-is_wajib="${dt.is_wajib}" data-jumlah_dokumen_upload="${dokumen_peneliti.length}">
                                 <span class="nama_dokumen">${dt.nama} (${dt.tipe_file})</span> ${is_wajib}
                                 <div class="text-muted" style="font-style:italic;">${dt.keterangan}</div>
                                 ${is_valid ? '' : `<input style="font-size:10px;" type="file" class="file-dokumen" data-id="${dt.id}" accept="${acceptType}">`}
@@ -307,9 +309,9 @@
         $('#btn-kirim-dokumen').remove();
         $('#btn-ganti-judul').remove();
         $('#judul').prop('disabled', true);
-        renderDokumen(response.penelitian.dokumen,'#syarat-upload','output',false);
+        renderDokumen(response.penelitian.dokumen,response.dokumen_peneliti,'#syarat-upload','output',false);
       }
-      renderDokumen(response.penelitian.dokumen,'#dokumen-upload','syarat',response.is_valid);
+      renderDokumen(response.penelitian.dokumen,response.dokumen_peneliti,'#dokumen-upload','syarat',response.is_valid);
     }    
 
     function dataLoad() {

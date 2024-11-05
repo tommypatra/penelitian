@@ -62,6 +62,12 @@
               <div class="card-body">
                 <div class="row">
                   <div class="col-md-12">
+
+                    @if(session('error'))
+                      <div class="alert alert-danger">
+                          {{ session('error') }}
+                      </div>
+                    @endif                    
                     <div class="form-group">
                       <label for="required">Email Address</label>
                       <input type="email" class="form-control" name="email" id="email" placeholder="Enter Email" required>
@@ -75,7 +81,8 @@
                 </div>
               </div>
               <div class="card-footer">
-                <button class="btn btn-success">Masuk</button>
+                <button class="btn btn-success"><i class="fas fa-sign-in-alt"></i> Masuk</button>
+                <a href="{{ route('google.login') }}" class="btn btn-danger"><i class="fab fa-google"></i> Masuk dengan Google</a>
                 <div>Belum ada akun klik <a href="javascript:;" id="daftar-sekarang">Mendaftar Sekarang</a></div>
               </div>
           </form>
@@ -269,6 +276,7 @@
 
   <script>
 
+
   function logout() {
     $.ajax({
         url: base_url + '/api/logout',
@@ -305,10 +313,34 @@
     });
   }
 
+  var myModalAkses = new bootstrap.Modal(document.getElementById('aksesModal'), {
+    backdrop: 'static', // nda bisa klik diluar modal
+    keyboard: false     // tombol esc tidak berfungsi untuk tutup modal  
+  });
+
+  var myModalPendaftaran = new bootstrap.Modal(document.getElementById('modalPendaftaran'), {
+    backdrop: 'static', // nda bisa klik diluar modal
+    keyboard: false     // tombol esc tidak berfungsi untuk tutup modal  
+  });
+
+
   $(document).ready(function() {
     toastr.options.closeButton = true;
     //khusus saat laman login saja
-    cekToken();
+
+
+    @if(session('respon_google_login'))
+      const response = @json(session('respon_google_login'));
+      console.log(response);
+      if (response.status) {
+        setLocalStorage(response);
+      }
+    @else
+      cekToken();
+    @endif
+
+
+
     function cekToken() {
       var role_akses = localStorage.getItem('role_akses');
       if (role_akses) {
@@ -325,15 +357,6 @@
       }
     }
 
-    var myModalAkses = new bootstrap.Modal(document.getElementById('aksesModal'), {
-      backdrop: 'static', // nda bisa klik diluar modal
-      keyboard: false     // tombol esc tidak berfungsi untuk tutup modal  
-    });
-
-    var myModalPendaftaran = new bootstrap.Modal(document.getElementById('modalPendaftaran'), {
-      backdrop: 'static', // nda bisa klik diluar modal
-      keyboard: false     // tombol esc tidak berfungsi untuk tutup modal  
-    });
 
     function showModalAkses(url) {
       $('#daftar-akses').html('');
@@ -355,19 +378,23 @@
       }
     }
 
+    function setLocalStorage(response){
+      localStorage.setItem('access_token', response.data.access_token);
+      localStorage.setItem('daftar_akses', JSON.stringify(response.data.daftar_akses));
+      localStorage.setItem('role_akses', response.data.role_akses);
+      localStorage.setItem('user_role_id', response.data.user_role_id);
+      localStorage.setItem('user_name', response.data.user.name);
+      localStorage.setItem('user_email', response.data.user.email);
+      localStorage.setItem('user_foto', response.data.user.identitas.foto);
+      showModalAkses();
+    }
+
     //untuk login
     $("#myform").validate({
         submitHandler: function(form) {
           ajaxRequest(base_url + '/api/auth-cek', 'post', $(form).serialize(), false,
             function(response) {
-              localStorage.setItem('access_token', response.data.access_token);
-              localStorage.setItem('daftar_akses', JSON.stringify(response.data.daftar_akses));
-              localStorage.setItem('role_akses', response.data.role_akses);
-              localStorage.setItem('user_role_id', response.data.user_role_id);
-              localStorage.setItem('user_name', response.data.user.name);
-              localStorage.setItem('user_email', response.data.user.email);
-              localStorage.setItem('user_foto', response.data.user.identitas.foto);
-              showModalAkses();
+              setLocalStorage(response);
             }
           );
         }

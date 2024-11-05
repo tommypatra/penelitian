@@ -12,6 +12,9 @@ use App\Http\Requests\VerifikasiRequest;
 use App\Http\Resources\PenelitiResource;
 use App\Models\SuratPenugasan;
 
+use Illuminate\Support\Facades\Mail;
+use App\Mail\KirimEmail;
+
 class PenelitiController extends Controller
 {
     /**
@@ -19,7 +22,7 @@ class PenelitiController extends Controller
      */
     public function index(Request $request)
     {
-        $dataQuery = Peneliti::with(['penelitian.dokumen.dokumenPeneliti', 'adminRole.user', 'userRole.user.identitas', 'suratPenugasan'])->orderBy('judul', 'asc');
+        $dataQuery = Peneliti::with(['penelitian.dokumen', 'dokumenPeneliti.dokumen', 'adminRole.user', 'userRole.user.identitas', 'suratPenugasan'])->orderBy('judul', 'asc');
 
         //untuk dapat role id admin atau dosen yang sedang login
         $daftar_role = daftarAkses(auth()->user()->id);
@@ -28,6 +31,7 @@ class PenelitiController extends Controller
 
         if (!$is_admin)
             if ($is_dosen) {
+                // echo $is_dosen;
                 $dataQuery->where('user_role_id', $is_dosen);
             } else {
                 return response()->json(['status' => false, 'message' => 'Akses ditolak'], 403);
@@ -95,11 +99,51 @@ class PenelitiController extends Controller
             $daftar_role = daftarAkses(auth()->user()->id);
             $is_admin = cekRole($daftar_role, "Admin");
             $is_dosen = cekRole($daftar_role, "Dosen");
-            if (!$is_admin && $is_dosen !== $data_save['user_role_id']) {
+
+            if (!$is_admin && $is_dosen != $data_save['user_role_id']) {
                 return response()->json(['status' => false, 'message' => 'Akses ditolak.'], 403);
             }
             $data = Peneliti::create($data_save);
             DB::commit();
+
+            // cari nama, email, penelitian dan judul berdasarkan user_role_id
+            $data_peneliti = dataPeneliti($data['user_role_id'], $data['penelitian_id']);
+            $user_peneliti = $data_peneliti->userRole->user;
+            $penelitian = $data_peneliti->penelitian;
+
+            // Mengirim email setelah berhasil commit transaksi
+            Mail::to($user_peneliti->email)->queue(new KirimEmail(
+                'Pendaftaran Penelitian Berhasil Dilakukan',
+                [
+                    'id' => $data_peneliti->id,
+                    'name' => $user_peneliti->name,
+                    'penelitian' => $penelitian->nama,
+                    'tahun' => $penelitian->tahun,
+                    'judul' => $data_peneliti->judul,
+                    'konten' => "<p>Selanjutnya untuk melengkapi berkas yang akan diupload pada menu timeline penelitian <a href='" . url('/timeline-penelitan/' . $data_peneliti->id) . "' target='_blank'>" . url('/timeline-penelitan/' . $data_peneliti->id) . "</a></p>",
+                ],
+                'mail.daftar_penelitian'
+            ));
+
+            //untuk kirim ke admin dan jfu
+            $kirim_pengelola = getEmailsByRoles(['Admin', 'JFU']);
+            if (count($kirim_pengelola) > 0)
+                foreach ($kirim_pengelola as $email_pengelola) {
+                    // Mengirim email setelah berhasil commit transaksi
+                    Mail::to($email_pengelola)->queue(new KirimEmail(
+                        'Pendaftaran Penelitian Berhasil Dilakukan',
+                        [
+                            'id' => $data_peneliti->id,
+                            'name' => $user_peneliti->name,
+                            'penelitian' => $penelitian->nama,
+                            'tahun' => $penelitian->tahun,
+                            'judul' => $data_peneliti->judul,
+                            'konten' => "",
+                        ],
+                        'mail.daftar_penelitian'
+                    ));
+                }
+
             return response()->json(['status' => true, 'message' => 'data baru berhasil dibuat', 'data' => $data], 201);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -113,16 +157,18 @@ class PenelitiController extends Controller
     public function show(string $id)
     {
         try {
-            $data = Peneliti::with(['penelitian.dokumen.dokumenPeneliti', 'adminRole.user', 'userRole.user.identitas', 'suratPenugasan']);
-            //untuk dapat role id admin atau dosen yang sedang login
             $daftar_role = daftarAkses(auth()->user()->id);
             $is_admin = cekRole($daftar_role, "Admin");
             $is_dosen = cekRole($daftar_role, "Dosen");
-
-            $dataQuery = $data->where('id', $id)->firstOrFail();
-            if (!$is_admin && $is_dosen !== $dataQuery->user_role_id) {
+            if (!$is_admin && $is_dosen != $dataQuery->user_role_id) {
                 return response()->json(['status' => false, 'message' => 'Akses ditolak.'], 403);
             }
+
+
+            $data = Peneliti::with(['penelitian.dokumen', 'dokumenPeneliti.dokumen', 'adminRole.user', 'userRole.user.identitas', 'suratPenugasan']);
+            //untuk dapat role id admin atau dosen yang sedang login
+
+            $dataQuery = $data->where('id', $id)->firstOrFail();
 
             return response()->json([
                 'status' => true,
@@ -152,7 +198,7 @@ class PenelitiController extends Controller
             $is_admin = cekRole($daftar_role, "Admin");
             $is_dosen = cekRole($daftar_role, "Dosen");
             $data = Peneliti::where('id', $id)->firstOrFail();
-            if (!$is_admin && $is_dosen !== $data->user_role_id) {
+            if (!$is_admin && $is_dosen != $data->user_role_id) {
                 return response()->json(['status' => false, 'message' => 'Anda tidak memiliki izin untuk memperbarui penelitian ini.'], 403);
             }
 
@@ -178,7 +224,7 @@ class PenelitiController extends Controller
             $is_dosen = cekRole($daftar_role, "Dosen");
 
             $data = Peneliti::where('id', $id)->firstOrFail();
-            if (!$is_admin && $is_dosen !== $data->user_role_id) {
+            if (!$is_admin && $is_dosen != $data->user_role_id) {
                 return response()->json(['status' => false, 'message' => 'Akses ditolak.'], 403);
             }
 
@@ -201,16 +247,58 @@ class PenelitiController extends Controller
             $is_admin = cekRole($daftar_role, "Admin");
             $is_dosen = cekRole($daftar_role, "Dosen");
             $data = Peneliti::where('id', $id)->firstOrFail();
-            if (!$is_admin && $is_dosen !== $data->user_role_id) {
+            if (!$is_admin && $is_dosen != $data->user_role_id) {
                 return response()->json(['status' => false, 'message' => 'Akses ditolak.'], 403);
             }
 
             $data_save['is_selesai'] = true;
-            if ($data->is_selesai)
+            if ($data->is_selesai) {
                 $data_save['is_selesai'] = false;
-
+            }
             $data->update($data_save);
             DB::commit();
+
+            if ($data->is_selesai) {
+                //proses kirim email ke penulis, admin dan JFU
+                // cari nama, email, penelitian dan judul berdasarkan user_role_id
+                $data_peneliti = dataPeneliti($data->user_role_id, $data->penelitian_id);
+                $user_peneliti = $data_peneliti->userRole->user;
+                $penelitian = $data_peneliti->penelitian;
+
+                // Mengirim email setelah berhasil commit transaksi
+                Mail::to($user_peneliti->email)->queue(new KirimEmail(
+                    'Pendaftaran Penelitian Berhasil Dilakukan',
+                    [
+                        'id' => $data_peneliti->id,
+                        'name' => $user_peneliti->name,
+                        'penelitian' => $penelitian->nama,
+                        'tahun' => $penelitian->tahun,
+                        'judul' => $data_peneliti->judul,
+                        'konten' => "<p>Berikutnya menunggu hasil verifikasi dari admin/JFU LPPM yang dapat dipantau pada timeline penelitian <a href='" . url('/timeline-penelitan/' . $data_peneliti->id) . "' target='_blank'>" . url('/timeline-penelitan/' . $data_peneliti->id) . "</a></p>",
+                    ],
+                    'mail.kirim_penelitian'
+                ));
+
+                //untuk kirim ke admin dan jfu
+                $kirim_pengelola = getEmailsByRoles(['Admin', 'JFU']);
+                if (count($kirim_pengelola) > 0)
+                    foreach ($kirim_pengelola as $email_pengelola) {
+                        // Mengirim email setelah berhasil commit transaksi
+                        Mail::to($email_pengelola)->queue(new KirimEmail(
+                            'Pendaftaran Penelitian Berhasil Dilakukan',
+                            [
+                                'id' => $data_peneliti->id,
+                                'name' => $user_peneliti->name,
+                                'penelitian' => $penelitian->nama,
+                                'tahun' => $penelitian->tahun,
+                                'judul' => $data_peneliti->judul,
+                                'konten' => "Silahkan login dan lakukan verifikasi berkas dokumen penelitian",
+                            ],
+                            'mail.kirim_penelitian'
+                        ));
+                    }
+            }
+
             return response()->json(['status' => true, 'message' => 'finalisasi penelitian berhasil diperbarui', 'data' => $data], 200);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -228,7 +316,7 @@ class PenelitiController extends Controller
             $daftar_role = daftarAkses(auth()->user()->id);
             $is_admin = cekRole($daftar_role, "Admin");
             $is_jfu = cekRole($daftar_role, "JFU");
-            if (!$is_admin && $is_jfu) {
+            if (!$is_admin && !$is_jfu) {
                 return response()->json(['status' => false, 'message' => 'Akses ditolak.'], 403);
             }
 
@@ -259,6 +347,55 @@ class PenelitiController extends Controller
             }
 
             DB::commit();
+
+            // proses kirim email ke penulis, admin dan JFU
+
+            // cari nama, email, penelitian dan judul berdasarkan user_role_id
+            $data_peneliti = dataPeneliti($data->user_role_id, $data->penelitian_id);
+            $user_peneliti = $data_peneliti->userRole->user;
+            $penelitian = $data_peneliti->penelitian;
+
+            $hasil = "tidak memenuhi";
+            $konten = "<p>Perlu kami informasikan bahwa, berkas penelitian <b>" . $hasil . "</b> untuk kelengkapan berkasnya. 
+                        Mohon login kembali dan perbaiki dokumen upload penelitian dengan catatan verifikator <i>" . $data_save['catatan'] . "</i> yang dapat dilihat pada timeline penelitian <a href='" . url('/timeline-penelitan/' . $data->id) . "' target='_blank'>" . url('/timeline-penelitan/' . $data->id) . "</a></p>";
+            if ($data->is_valid) {
+                $hasil = "memenuhi syarat";
+                $konten = "<p>Perlu kami informasikan bahwa, berkas penelitian <b>" . $hasil . "</b> untuk kelengkapan berkasnya. 
+                        Selanjutnya menunggu proses persetujuan eSign Ketua LPPM yang dapat dipantau pada timeline penelitian <a href='" . url('/timeline-penelitan/' . $data->id) . "' target='_blank'>" . url('/timeline-penelitan/' . $data->id) . "</a></p>";
+            }
+            // Mengirim email setelah berhasil commit transaksi
+            Mail::to($user_peneliti->email)->queue(new KirimEmail(
+                'Verifikasi Dokumen Penelitan',
+                [
+                    'id' => $data_peneliti->id,
+                    'name' => $user_peneliti->name,
+                    'penelitian' => $penelitian->nama,
+                    'tahun' => $penelitian->tahun,
+                    'judul' => $data_peneliti->judul,
+                    'konten' => $konten,
+                ],
+                'mail.verifikasi_penelitian'
+            ));
+
+            //untuk kirim ke admin dan jfu
+            $kirim_pengelola = getEmailsByRoles(['Admin', 'JFU']);
+            if (count($kirim_pengelola) > 0)
+                foreach ($kirim_pengelola as $email_pengelola) {
+                    // Mengirim email setelah berhasil commit transaksi
+                    Mail::to($email_pengelola)->queue(new KirimEmail(
+                        'Verifikasi Dokumen Penelitan',
+                        [
+                            'id' => $data_peneliti->id,
+                            'name' => $user_peneliti->name,
+                            'penelitian' => $penelitian->nama,
+                            'tahun' => $penelitian->tahun,
+                            'judul' => $data_peneliti->judul,
+                            'konten' => "Dokumen penelitiannya telah diverifikasi dan " . $hasil,
+                        ],
+                        'mail.verifikasi_penelitian'
+                    ));
+                }
+
             return response()->json(['status' => true, 'message' => 'verifikasi penelitian berhasil dilakukan', 'data' => $respon], 200);
         } catch (\Exception $e) {
             DB::rollBack();

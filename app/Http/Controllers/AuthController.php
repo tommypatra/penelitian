@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Requests\AuthRequest;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Redirect;
 
 class AuthController extends Controller
 {
@@ -58,6 +60,54 @@ class AuthController extends Controller
             'data' => $daftarAkses,
         ];
         return response()->json($respon_data, 200);
+    }
+
+
+    public function redirectToGoogle()
+    {
+        return Socialite::driver('google')->redirect();
+    }
+
+    public function handleGoogleCallback()
+    {
+        try {
+            $googleUser = Socialite::driver('google')->user();
+            $email = $googleUser->getEmail();
+            // Temukan atau buat pengguna berdasarkan email
+            $user = User::with('identitas')->where('email', $email)->first();
+            if (!$user)
+                return redirect::to('login')->with('error', 'Login failed, user not found');
+
+            // Login pengguna
+            Auth::login($user);
+
+            // Mengambil daftar akses pengguna
+            $daftarAkses = daftarAkses($user->id);
+            $token = $user->createToken('api_token')->plainTextToken;
+            $role_akses = $daftarAkses[0]->role;
+            $user_role_id = $daftarAkses[0]->user_role_id;
+
+            $respon_data = [
+                'status' => true,
+                'message' => 'Login successful',
+                'data' => [
+                    'user' => $user,
+                    'access_token' => $token,
+                    'daftar_akses' => $daftarAkses,
+                    'role_akses' => $role_akses,
+                    'user_role_id' => $user_role_id,
+                    'token_type' => 'Bearer',
+                ]
+            ];
+            // return Redirect::to('/dashboard');
+            // Redirect ke halaman yang diinginkan dengan data pengguna dalam query string
+            return redirect::to('login')->with('respon_google_login', $respon_data);
+
+            // return response()->json($respon_data, 200);
+        } catch (\Exception $e) {
+            // return response()->json(['message' => 'Login failed, please try again.'], 500);
+            return Redirect::to('login')->with('error', 'Login failed, please try again. ' . $e->getMessage());
+        }
     }
 
     function tokenCek($grup_id)

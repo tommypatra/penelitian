@@ -1,7 +1,15 @@
 <?php
 
-use App\Http\Controllers\WebController;
+use App\Models\User;
+use App\Mail\KirimEmail;
+//---------- sementera untuk kirim email
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\WebController;
+use App\Http\Controllers\AuthController;
+
+Route::get('auth/google', [AuthController::class, 'redirectToGoogle'])->name('google.login');
+Route::get('auth/callback', [AuthController::class, 'handleGoogleCallback']);
 
 Route::get('/', [WebController::class, 'login']);
 Route::get('/login', [WebController::class, 'login'])->name('login');
@@ -19,7 +27,6 @@ Route::get('/dokumen-penelitian', [WebController::class, 'dokumenPenelitian'])->
 //untuk admin dan jfu lppm
 Route::get('/verifikasi', [WebController::class, 'verifikasi'])->name('verifikasi');
 Route::get('/pengelola-surat-penugasan', [WebController::class, 'pengelolaSuratPenugasan'])->name('pengelola-surat-penugasan');
-
 
 //untuk dosen
 Route::get('/daftar-penelitian', [WebController::class, 'daftarPenelitian'])->name('daftar-penelitian');

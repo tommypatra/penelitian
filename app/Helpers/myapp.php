@@ -24,6 +24,33 @@ if (!function_exists('daftarAkses')) {
     }
 }
 
+
+if (!function_exists('getEmailsByRoles')) {
+    function getEmailsByRoles(array $roleNames)
+    {
+        return User::with(['userRole.role'])
+            ->whereHas('userRole.role', function ($query) use ($roleNames) {
+                $query->whereIn('nama', $roleNames);
+            })
+            ->distinct()
+            ->pluck('email');
+    }
+}
+
+
+if (!function_exists('dataPeneliti')) {
+    function dataPeneliti($user_role_id, $penelitian_id)
+    {
+        $data = Peneliti::with(['penelitian', 'userRole.user'])
+            ->where('user_role_id', $user_role_id)
+            ->where('penelitian_id', $penelitian_id)
+            ->first();
+
+        return $data;
+    }
+}
+
+
 if (!function_exists('cekRole')) {
 
     function cekRole($daftar_role, $role_name)

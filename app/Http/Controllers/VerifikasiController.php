@@ -79,6 +79,7 @@ class VerifikasiController extends Controller
             $data = Peneliti::where('id', $id)->firstOrFail();
             $data->update($request->validated());
             DB::commit();
+
             return response()->json(['status' => true, 'message' => 'berhasil diperbaharui', 'data' => $data], 200);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -93,9 +94,10 @@ class VerifikasiController extends Controller
     {
         try {
             DB::beginTransaction();
-            $data = DokumenPeneliti::where('id', $id)->firstOrFail();
+            $data = DokumenPeneliti::with(['peneliti'])where('id', $id)->firstOrFail();
             $data->update($request->validated());
             DB::commit();
+
             return response()->json(['status' => true, 'message' => 'berhasil diperbaharui', 'data' => $data], 200);
         } catch (\Exception $e) {
             DB::rollBack();

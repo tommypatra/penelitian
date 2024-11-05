@@ -296,6 +296,7 @@
         const penelitian=response.data.penelitian;
         const user=response.data.user_role.user;
         const dokumen=response.data.penelitian.dokumen;
+        const dokumen_peneliti=response.data.dokumen_peneliti;
         // console.log(peneliti);
         $('#id').val(response.data.id);
         $('#admin_role_id').val(user_role_id);
@@ -308,13 +309,13 @@
         $('#modal-foto').attr('href',base_url+'/'+peneliti.foto);
         $('#modal-judul-penelitian').text(response.data.judul);
         $('#modal-waktu-update').text(timeAgo(response.data.updated_at));
-        renderDokumen(dokumen,'#modal-daftar-file','syarat')
+        renderDokumen(dokumen,dokumen_peneliti,'#modal-daftar-file','syarat')
 
         showModalForm();
       });
     });
 
-    function renderDokumen(dokumen,elementId,kategori){
+    function renderDokumen(dokumen,dokumen_peneliti,elementId,kategori){
       const ul = $('<ul class="dokumen"></ul>');
       $(elementId).empty();
       if (dokumen.length > 0) {
@@ -332,21 +333,23 @@
 
                 //untuk list file yang sudah di upload               
                 const ul_file = $('<ul class="file-upload" style="list-style-type: none; padding-left: 0;"></ul>');
-                if(dt.dokumen_peneliti.length>0){
-                  $.each(dt.dokumen_peneliti, function(index_file, dt_file) {
-                    const li_file = $(`<li class="daftar-file">
-                                          <span class="badge bg-success">                                             
-                                            ${dt.nama}-${index_file+1}
-                                          </span>  
-                                          <span style="font-size:12px">${timeAgo(dt_file.created_at)}</span>
-                                          <a href="${base_url+'/storage/'+dt_file.path}" target="_blank"><i class="fas fa-file-download"></i></a>
-                                        </li>`);
-                    ul_file.append(li_file);
+                if(dokumen_peneliti.length>0){
+                  $.each(dokumen_peneliti, function(index_file, dt_file) {
+                    if(dt_file.dokumen_id==dt.id){
+                      const li_file = $(`<li class="daftar-file">
+                                            <span class="badge bg-success">                                             
+                                              ${dt.nama}-${index_file+1}
+                                            </span>  
+                                            <span style="font-size:12px">${timeAgo(dt_file.created_at)}</span>
+                                            <a href="${base_url+'/storage/'+dt_file.path}" target="_blank"><i class="fas fa-file-download"></i></a>
+                                          </li>`);
+                      ul_file.append(li_file);
+                    }
                   });
                 } 
 
                 //membuat list untuk dokumen               
-                const li = $(`<li class="daftar-dokumen" data-is_wajib="${dt.is_wajib}" data-jumlah_dokumen_upload="${dt.dokumen_peneliti.length}">
+                const li = $(`<li class="daftar-dokumen" data-is_wajib="${dt.is_wajib}" data-jumlah_dokumen_upload="${dokumen_peneliti.length}">
                                 <span class="nama_dokumen">${dt.nama} (${dt.tipe_file})</span> ${is_wajib}
                                 <div class="text-muted" style="font-style:italic;">${dt.keterangan}</div>
                                 <div class="ul_file"></div>                                

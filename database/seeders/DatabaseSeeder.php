@@ -44,10 +44,10 @@ class DatabaseSeeder extends Seeder
         }
 
         $dtdef = [
-            ['name' => 'Muhammad Shaleh Assingkily', 'email' => 'admin@iainkendari.ac.id'],
-            ['name' => 'Abdul Kadir', 'email' => 'abdulkadir@iainkendari.ac.id'],
-            ['name' => 'Arif Tarawe', 'email' => 'ariftarawe@iainkendari.ac.id'],
-            ['name' => 'Fahmi Gunawan', 'email' => 'fahmigunawan@iainkendari.ac.id'],
+            ['name' => 'Muhammad Shaleh Assingkily', 'email' => 'muhammadshalehassingkily@iainkendari.ac.id'],
+            ['name' => 'Abdul Kadir', 'email' => 'abdir_edu@iainkendari.ac.id'],
+            ['name' => 'Sumardona', 'email' => 'sumardona@iainkendari.ac.id'],
+            ['name' => 'Fahmi Gunawan', 'email' => 'fgunawan@iainkendari.ac.id'],
         ];
 
         foreach ($dtdef as $dt) {

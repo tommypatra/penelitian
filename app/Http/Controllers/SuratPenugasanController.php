@@ -12,6 +12,9 @@ use App\Http\Resources\SuratPenugasanResource;
 use App\Http\Requests\PenomoranSuratPenugasanRequest;
 use App\Http\Requests\PersetujuanSuratPenugasanRequest;
 
+use Illuminate\Support\Facades\Mail;
+use App\Mail\KirimEmail;
+
 class SuratPenugasanController extends Controller
 {
     /**
@@ -22,8 +25,8 @@ class SuratPenugasanController extends Controller
         $dataQuery = SuratPenugasan::with(['peneliti.userRole.user.identitas', 'peneliti.penelitian', 'userRole.user', 'ketuaLppmRole.user'])->orderBy('is_disetujui', 'desc')->orderBy('tanggal_surat', 'desc');
 
         //untuk dapat role id admin atau jfu yang sedang login
-        // $daftar_role = daftarAkses(auth()->user()->id);
-        // $is_admin = cekRole($daftar_role, "Admin");
+        $daftar_role = daftarAkses(auth()->user()->id);
+        // $is_dosen = cekRole($daftar_role, "Dosen");
         // $is_jfu = cekRole($daftar_role, "JFU");
         // if (!$is_admin || !$is_jfu) {
         //     return response()->json(['status' => false, 'message' => 'Akses ditolak'], 403);
@@ -83,7 +86,7 @@ class SuratPenugasanController extends Controller
         if (!$is_dosen) {
             return response()->json(['status' => false, 'message' => 'Akses ditolak'], 403);
         }
-        $dataQuery->where('is_disetujui', true)
+        $dataQuery->where('is_disetujui', true)->whereNotNull('nomor_surat')
             ->where(function ($query) use ($is_dosen) {
                 $query->whereHas('peneliti', function ($userQuery) use ($is_dosen) {
                     $userQuery->where('user_role_id', $is_dosen);
@@ -224,11 +227,55 @@ class SuratPenugasanController extends Controller
                 return response()->json(['status' => false, 'message' => 'Akses ditolak.'], 403);
             }
 
-            $data = SuratPenugasan::where('id', $id)->firstOrFail();
+            $data = SuratPenugasan::with(['peneliti'])->where('id', $id)->firstOrFail();
             $data_save = $request->validated();
             $data_save['persetujuan_at'] = Carbon::now()->toIso8601String();;
             $data->updateQuietly($data_save);
             DB::commit();
+
+            if ($data_save['is_disetujui']) {
+                // cari nama, email, penelitian dan judul berdasarkan user_role_id
+                $data_peneliti = dataPeneliti($data->peneliti->user_role_id, $data->peneliti->penelitian_id);
+                $user_peneliti = $data_peneliti->userRole->user;
+                $penelitian = $data_peneliti->penelitian;
+
+                $konten = "<p>Perlu kami informasikan bahwa, berkas penelitian telah <b>disetujui</b> eSign oleh ketua LPPM. 
+                    Selanjutnya menunggu proses pemberian nomor oleh JFU LPPM IAIN Kendari yang dapat dipantau pada timeline penelitian <a href='" . url('/timeline-penelitan/' . $data->peneliti->id) . "' target='_blank'>" . url('/timeline-penelitan/' . $data->peneliti->id) . "</a></p>";
+                // Mengirim email setelah berhasil commit transaksi
+                Mail::to($user_peneliti->email)->queue(new KirimEmail(
+                    'Verifikasi Dokumen Penelitan',
+                    [
+                        'id' => $data_peneliti->id,
+                        'name' => $user_peneliti->name,
+                        'penelitian' => $penelitian->nama,
+                        'tahun' => $penelitian->tahun,
+                        'judul' => $data_peneliti->judul,
+                        'konten' => $konten,
+                    ],
+                    'mail.persetujuan_ketua'
+                ));
+
+                //untuk kirim ke admin dan jfu
+                $kirim_pengelola = getEmailsByRoles(['Admin', 'JFU']);
+                if (count($kirim_pengelola) > 0)
+                    foreach ($kirim_pengelola as $email_pengelola) {
+                        // Mengirim email setelah berhasil commit transaksi
+                        Mail::to($email_pengelola)->queue(new KirimEmail(
+                            'Verifikasi Dokumen Penelitan',
+                            [
+                                'id' => $data_peneliti->id,
+                                'name' => $user_peneliti->name,
+                                'penelitian' => $penelitian->nama,
+                                'tahun' => $penelitian->tahun,
+                                'judul' => $data_peneliti->judul,
+                                'konten' => "Dokumen penelitiannya telah mendapat persetujuan eSign oleh Ketua LPPM IAIN Kendari, mohon untuk segera diproses penomoran surat tersebut ",
+                            ],
+                            'mail.persetujuan_ketua'
+                        ));
+                    }
+            }
+
+
             return response()->json(['status' => true, 'message' => 'persetujuan penugasan berhasil dilakukan', 'data' => $data], 200);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -252,9 +299,51 @@ class SuratPenugasanController extends Controller
                 return response()->json(['status' => false, 'message' => 'Akses ditolak.'], 403);
             }
 
-            $data = SuratPenugasan::where('id', $id)->firstOrFail();
+            $data = SuratPenugasan::with(['peneliti'])->where('id', $id)->firstOrFail();
             $data->update($request->validated());
             DB::commit();
+
+
+            // cari nama, email, penelitian dan judul berdasarkan user_role_id
+            $data_peneliti = dataPeneliti($data->peneliti->user_role_id, $data->peneliti->penelitian_id);
+            $user_peneliti = $data_peneliti->userRole->user;
+            $penelitian = $data_peneliti->penelitian;
+
+            $konten = "<p>Surat penelitian telah terbit dengan nomor " . $data->nomor_surat . " 
+                    surat dapat didownload melalui menu surat penugasan <a href='" . url('/surat-penugasan') . "' target='_blank'>" . url('/surat-penugasan') . "</a> atau timeline penelitian <a href='" . url('/timeline-penelitan/' . $data->peneliti->id) . "' target='_blank'>" . url('/timeline-penelitan/' . $data->peneliti->id) . "</a></p>";
+            // Mengirim email setelah berhasil commit transaksi
+            Mail::to($user_peneliti->email)->queue(new KirimEmail(
+                'Penomoran Surat',
+                [
+                    'id' => $data_peneliti->id,
+                    'name' => $user_peneliti->name,
+                    'penelitian' => $penelitian->nama,
+                    'tahun' => $penelitian->tahun,
+                    'judul' => $data_peneliti->judul,
+                    'konten' => $konten,
+                ],
+                'mail.penomoran_surat'
+            ));
+
+            //untuk kirim ke admin dan jfu
+            $kirim_pengelola = getEmailsByRoles(['Admin', 'JFU']);
+            if (count($kirim_pengelola) > 0)
+                foreach ($kirim_pengelola as $email_pengelola) {
+                    // Mengirim email setelah berhasil commit transaksi
+                    Mail::to($email_pengelola)->queue(new KirimEmail(
+                        'Penomoran Surat',
+                        [
+                            'id' => $data_peneliti->id,
+                            'name' => $user_peneliti->name,
+                            'penelitian' => $penelitian->nama,
+                            'tahun' => $penelitian->tahun,
+                            'judul' => $data_peneliti->judul,
+                            'konten' => "<p>Surat penelitian telah terbit dengan nomor " . $data->nomor_surat . "</p>",
+                        ],
+                        'mail.penomoran_surat'
+                    ));
+                }
+
             return response()->json(['status' => true, 'message' => 'penomoran surat berhasil dilakukan', 'data' => $data], 200);
         } catch (\Exception $e) {
             DB::rollBack();
