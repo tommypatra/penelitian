@@ -42,8 +42,17 @@ class UserRequest extends FormRequest
             'gelar_belakang' => 'nullable|string',
             'no_hp' => 'nullable|string',
             'foto' => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
-            'nip' => 'nullable|string',
-            'nidn' => 'nullable|string',
+
+            'nip' => [
+                'nullable',
+                'string',
+                Rule::unique('identitas', 'nip')->ignore($id), // Abaikan record dengan ID ini saat update
+            ],
+            'nidn' => [
+                'nullable',
+                'string',
+                Rule::unique('identitas', 'nidn')->ignore($id), // Abaikan record dengan ID ini saat update
+            ],
             'jabatan' => 'nullable|string',
             'unit_kerja_id' => 'required|exists:unit_kerjas,id',
             'pangkat_id' => 'required|exists:pangkats,id',
