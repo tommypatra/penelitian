@@ -39,3 +39,17 @@ Route::get('/cek-qrcode/{id}', [WebController::class, 'cekQrcode'])->name('cek-q
 
 Route::get('/profil', [WebController::class, 'profil'])->name('profil');
 Route::get('/pendaftaran', [WebController::class, 'pendaftaran'])->name('pendaftaran');
+
+
+Route::get('/kirim-email', function () {
+    // Mengirim email setelah berhasil commit transaksi
+    Mail::to('tommyirawan.patra@gmail.com')->queue(new KirimEmail(
+        'Test kirim email',
+        [
+            'konten' => '<h5>Konten coba kirim email</h5>',
+        ],
+        'mail.kirim'
+    ));
+
+    return 'Email telah dikirim!';
+});
