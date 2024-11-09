@@ -229,7 +229,8 @@ class SuratPenugasanController extends Controller
 
             $data = SuratPenugasan::with(['peneliti'])->where('id', $id)->firstOrFail();
             $data_save = $request->validated();
-            $data_save['persetujuan_at'] = Carbon::now()->toIso8601String();;
+            // $data_save['persetujuan_at'] = Carbon::now()->toIso8601String();;
+            $data_save['persetujuan_at'] = Carbon::now('Asia/Makassar')->toDateTimeString();
             $data->updateQuietly($data_save);
             DB::commit();
 
