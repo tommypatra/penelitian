@@ -322,7 +322,7 @@ class PenelitiController extends Controller
 
             $data_save['admin_role_id'] = $is_jfu;
             // $data_save['validated_at'] = Carbon::now()->toIso8601String();
-            $data_save['validated_at'] = Carbon::now('Asia/Jakarta')->toDateTimeString();
+            $data_save['validated_at'] = Carbon::now('Asia/Makassar')->toDateTimeString();
             //jika tidak valid maka is_selesai akan terbuka
             if (!$data_save['is_valid']) {
                 $data_save['is_selesai'] = false;
