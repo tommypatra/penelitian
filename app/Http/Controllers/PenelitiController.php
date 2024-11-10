@@ -28,8 +28,9 @@ class PenelitiController extends Controller
         $daftar_role = daftarAkses(auth()->user()->id);
         $is_admin = cekRole($daftar_role, "Admin");
         $is_dosen = cekRole($daftar_role, "Dosen");
+        $is_jfu = cekRole($daftar_role, "JFU");
 
-        if (!$is_admin)
+        if (!$is_admin && !$is_jfu)
             if ($is_dosen) {
                 // echo $is_dosen;
                 $dataQuery->where('user_role_id', $is_dosen);

@@ -294,9 +294,9 @@ class SuratPenugasanController extends Controller
             //untuk dapat role id admin atau dosen yang sedang login
             $daftar_role = daftarAkses(auth()->user()->id);
             $is_admin = cekRole($daftar_role, "Admin");
-            $is_ketua_lppm = cekRole($daftar_role, "Ketua");
+            $is_jfu = cekRole($daftar_role, "JFU");
 
-            if (!$is_admin && $is_ketua_lppm !== $validated['ketua_lppm_role_id']) {
+            if (!$is_jfu) {
                 return response()->json(['status' => false, 'message' => 'Akses ditolak.'], 403);
             }
 

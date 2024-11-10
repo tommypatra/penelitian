@@ -47,6 +47,7 @@ class DatabaseSeeder extends Seeder
             ['name' => 'Muhammad Shaleh Assingkily', 'email' => 'muhammadshalehassingkily@iainkendari.ac.id'],
             ['name' => 'Abdul Kadir', 'email' => 'abdir_edu@iainkendari.ac.id'],
             ['name' => 'Sumardona', 'email' => 'sumardona@iainkendari.ac.id'],
+            ['name' => 'Arif Tarawe', 'email' => 'arif@iainkendari.ac.id'],
             ['name' => 'Fahmi Gunawan', 'email' => 'fgunawan@iainkendari.ac.id'],
         ];
 
