@@ -101,7 +101,7 @@
                         <td class="top peneliti_judul"></td>
                       </tr>
                       <tr>
-                        <td class="top">Nama Penelitian</td>
+                        <td class="top">Nama Peneliti</td>
                         <td class="top center">:</td>
                         <td  class="top peneliti_nama"></td>
                       </tr>
