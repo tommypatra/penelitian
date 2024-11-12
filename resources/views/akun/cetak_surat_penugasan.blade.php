@@ -281,7 +281,7 @@
               const ketua_lppm=surat.ketua_lppm_role.user;
 
               const qr_link = `${base_url}/cek-qrcode/${surat.id}`;
-              const qr_ttd = `eSing ${ketua_lppm.name} for ${surat.nomor_surat} ${qr_link}`;
+              const qr_ttd = `eSing ${surat.nomor_surat} ${qr_link}`;
 
 
               const ketua_nama = `${labelWeb(ketua_lppm.identitas.gelar_depan)} ${ketua_lppm.name} ${labelWeb(ketua_lppm.identitas.gelar_belakang)}`;
