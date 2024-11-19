@@ -167,7 +167,7 @@ class PenelitiController extends Controller
 
             $dataQuery = $data->where('id', $id)->firstOrFail();
             //untuk dapat role id admin atau dosen yang sedang login
-            if ((!$is_admin || !$is_jfu) && $is_dosen != $dataQuery->user_role_id) {
+            if (!$is_admin && !$is_jfu && $is_dosen != $dataQuery->user_role_id) {
                 return response()->json(['status' => false, 'message' => 'Akses ditolak.'], 403);
             }
 
