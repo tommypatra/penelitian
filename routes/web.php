@@ -53,3 +53,11 @@ Route::get('/kirim-email', function () {
 
     return 'Email telah dikirim!';
 });
+
+Route::get('/enkrip/{email}', function ($email) {
+    echo enkrip($email);
+});
+
+Route::get('/dekrip/{text}', function ($text) {
+    echo dekrip($text);
+});

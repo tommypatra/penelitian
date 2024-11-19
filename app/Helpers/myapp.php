@@ -233,3 +233,22 @@ if (!function_exists('ambilKata')) {
         return $shortenedText;
     }
 }
+
+if (!function_exists('enkrip')) {
+    function enkrip($text)
+    {
+        $key = Carbon::now()->format('Y-m-d');
+        $enc = Crypt::encryptString($text, $key);
+
+        return $enc;
+    }
+}
+
+if (!function_exists('dekrip')) {
+    function dekrip($dectext)
+    {
+        $key = Carbon::now()->format('Y-m-d');
+        $dec = Crypt::decryptString($dectext, $key);
+        return $dec;
+    }
+}

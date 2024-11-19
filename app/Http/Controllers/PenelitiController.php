@@ -160,16 +160,16 @@ class PenelitiController extends Controller
         try {
             $daftar_role = daftarAkses(auth()->user()->id);
             $is_admin = cekRole($daftar_role, "Admin");
+            $is_jfu = cekRole($daftar_role, "JFU");
             $is_dosen = cekRole($daftar_role, "Dosen");
-            if (!$is_admin && $is_dosen != $dataQuery->user_role_id) {
-                return response()->json(['status' => false, 'message' => 'Akses ditolak.'], 403);
-            }
-
 
             $data = Peneliti::with(['penelitian.dokumen', 'dokumenPeneliti.dokumen', 'adminRole.user', 'userRole.user.identitas', 'suratPenugasan']);
-            //untuk dapat role id admin atau dosen yang sedang login
 
             $dataQuery = $data->where('id', $id)->firstOrFail();
+            //untuk dapat role id admin atau dosen yang sedang login
+            if ((!$is_admin || !$is_jfu) && $is_dosen != $dataQuery->user_role_id) {
+                return response()->json(['status' => false, 'message' => 'Akses ditolak.'], 403);
+            }
 
             return response()->json([
                 'status' => true,
